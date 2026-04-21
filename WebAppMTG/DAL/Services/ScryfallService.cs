@@ -20,11 +20,11 @@ namespace DAL.Services
             var url = $"cards/search?q={Uri.EscapeDataString(standardSearch)}";
             var httpResponse = await _httpClient.GetAsync(url);
 
-            if (!httpResponse.IsSuccessStatusCode)
-            {
-                var errorContent = await httpResponse.Content.ReadAsStringAsync();
-                throw new Exception($"Scryfall error: {(int)httpResponse.StatusCode} - {errorContent}");
-            }
+            //if (!httpResponse.IsSuccessStatusCode)
+            //{
+                //var errorContent = await httpResponse.Content.ReadAsStringAsync();
+                //throw new Exception($"Scryfall error: {(int)httpResponse.StatusCode} - {errorContent}");
+            //}
             var response = await httpResponse.Content.ReadFromJsonAsync<ScryfallSearchResponse>();
             return response?.Data ?? new List<ScryfallCardData>();
         }

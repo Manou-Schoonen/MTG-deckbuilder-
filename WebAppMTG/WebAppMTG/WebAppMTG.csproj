@@ -7,8 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\DAL\WebAppMTG.DAL.csproj" />
-    <ProjectReference Include="..\Logic\WebAppMTG.Logic.csproj" />
+    <ProjectReference Include="..\DAL\WebAppMTGDAL.csproj" />
+    <ProjectReference Include="..\Logic\WebAppMTGLogic.csproj" />
   </ItemGroup>
 
 </Project>

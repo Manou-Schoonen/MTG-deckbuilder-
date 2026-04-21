@@ -4,27 +4,11 @@
     ViewData["Title"] = "Home page";
 }
 
-<h1>Zoek kaarten</h1>
+<h2>Zoek kaarten</h2>
 
 <form method="get">
-    <input type="text" name="Query" value="@Model.query" />
-    <button type="submit">Zoeken</button>
+    <div class="mb-3">
+        <input asp-for="SearchText" class="form-control" placeholder="Zoek een kaart..." />
+    </div>
+    <button type="submit" class="btn btn-primary">Zoeken</button>
 </form>
-
-@if (Model.Cards.Any())
-{
-    <ul>
-        @foreach (var card in Model.Cards)
-        {
-            <li>
-                <strong>@card.Name</strong><br />
-                @card.ManaCost<br />
-                @card.TypeLine
-            </li>
-        }
-    </ul>
-}
-else if (!string.IsNullOrWhiteSpace(Model.query))
-{
-    <p>Geen kaarten gevonden.</p>
-}

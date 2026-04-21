@@ -1,5 +1,5 @@
 <Solution>
-  <Project Path="DAL/WebAppMTG.DAL.csproj" />
-  <Project Path="Logic/WebAppMTG.Logic.csproj" />
+  <Project Path="DAL/WebAppMTGDAL.csproj" />
+  <Project Path="Logic/WebAppMTGLogic.csproj" />
   <Project Path="WebAppMTG/WebAppMTG.csproj" />
 </Solution>

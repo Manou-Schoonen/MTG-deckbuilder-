@@ -1,4 +1,35 @@
 ﻿@page
 @model WebAppMTG.Pages.CardOverviewModel
-@{
+
+<h2>Zoekresultaten voor "@Model.Query"</h2>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+else if (Model.Cards == null || Model.Cards.Count == 0)
+{
+    <p>Geen kaarten gevonden.</p>
+}
+else
+{
+    <div class="card-grid">
+        @foreach (var card in Model.Cards)
+        {
+            <div class="card-item">
+                <div class="card-box">
+                    @if (!string.IsNullOrEmpty(card.ImageUris?.Normal))
+                    {
+                        <img src="@card.ImageUris.Normal" alt="@card.Name" class="card-image" />
+                    }
+                    else
+                    {
+                        <div class="no-image">Geen afbeelding</div>
+                    }
+
+                    <div class="card-name">@card.Name</div>
+                </div>
+            </div>
+        }
+    </div>
 }

@@ -1,0 +1,30 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<h1>Zoek kaarten</h1>
+
+<form method="get">
+    <input type="text" name="Query" value="@Model.query" />
+    <button type="submit">Zoeken</button>
+</form>
+
+@if (Model.Cards.Any())
+{
+    <ul>
+        @foreach (var card in Model.Cards)
+        {
+            <li>
+                <strong>@card.Name</strong><br />
+                @card.ManaCost<br />
+                @card.TypeLine
+            </li>
+        }
+    </ul>
+}
+else if (!string.IsNullOrWhiteSpace(Model.query))
+{
+    <p>Geen kaarten gevonden.</p>
+}

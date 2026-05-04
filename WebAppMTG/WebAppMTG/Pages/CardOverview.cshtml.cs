@@ -1,5 +1,5 @@
-using DAL.Models;
-using DAL.Services;
+using WebAppMTGLogic.Models;
+using WebAppMTGLogic.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -7,35 +7,24 @@ namespace WebAppMTG.Pages
 {
     public class CardOverviewModel : PageModel
     {
-        private readonly ScryfallService _scryfallService;
-
-        public CardOverviewModel(ScryfallService scryfallService)
+        private readonly ICardLogicService _cardLogicService;
+        public CardOverviewModel(ICardLogicService cardLogicService)
         {
-            _scryfallService = scryfallService;
+            _cardLogicService = cardLogicService;
         }
 
         [BindProperty(SupportsGet = true)]
         public string? Query { get; set; }
-
-        public List<ScryfallCardData> Cards { get; set; } = new();
-
         public string? ErrorMessage { get; set; }
+        public List<CardModel> Cards { get; set; } = new();
 
         public async Task OnGetAsync()
         {
-            if (string.IsNullOrWhiteSpace(Query))
+            if (!string.IsNullOrWhiteSpace(Query))
             {
-                return;
+                Cards = await _cardLogicService.SearchCardsAsync(Query);
             }
 
-            try
-            {
-                Cards = await _scryfallService.SearchCardsAsync(Query);
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = ex.Message;
-            }
         }
     }
 }

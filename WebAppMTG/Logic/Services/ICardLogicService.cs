@@ -1,0 +1,13 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using WebAppMTGLogic.Models;
+using WebAppMTGDAL.Services;
+
+namespace WebAppMTGLogic.Services
+{
+    public interface ICardLogicService
+    {
+        Task<List<CardModel>> SearchCardsAsync(string searchText);
+    }
+}

@@ -18,9 +18,9 @@ else
         {
             <div class="card-item">
                 <div class="card-box">
-                    @if (!string.IsNullOrEmpty(card.ImageUris?.Normal))
+                    @if (!string.IsNullOrEmpty(card.ImageUrl))
                     {
-                        <img src="@card.ImageUris.Normal" alt="@card.Name" class="card-image" />
+                        <img src="@card.ImageUrl" alt="@card.Name" class="card-image" />
                     }
                     else
                     {

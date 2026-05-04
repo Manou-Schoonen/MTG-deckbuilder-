@@ -1,7 +1,5 @@
-using DAL.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using DAL.Models;
 
 namespace WebAppMTG.Pages
 {

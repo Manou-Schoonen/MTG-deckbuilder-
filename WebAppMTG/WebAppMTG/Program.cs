@@ -1,4 +1,7 @@
 using DAL.Services;
+using WebAppMTGDAL.Services;
+using WebAppMTGLogic.Services;
+
 namespace WebAppMTG
 {
     public class Program
@@ -10,12 +13,14 @@ namespace WebAppMTG
             // Add services to the container.
             builder.Services.AddRazorPages();
 
-            builder.Services.AddHttpClient<ScryfallService>(client =>
+            builder.Services.AddHttpClient<IScryfallService, ScryfallService>(client =>
             {
                 client.BaseAddress = new Uri("https://api.scryfall.com/");
                 client.DefaultRequestHeaders.Add("User-Agent", "WebAppMTG/1.0");
                 client.DefaultRequestHeaders.Add("Accept", "application/json;q=0.9,*/*;q=0.8");
             });
+
+            builder.Services.AddScoped<ICardLogicService, CardLogicService>();
 
             var app = builder.Build();
 

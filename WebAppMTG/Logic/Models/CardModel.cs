@@ -7,7 +7,6 @@ namespace WebAppMTGLogic.Models
 {
     public class CardModel
     {
-        public string? Id { get; set; }
         public string? Name { get; set; }
         public string? ManaCost { get; set; }
         public string? TypeLine { get; set; }

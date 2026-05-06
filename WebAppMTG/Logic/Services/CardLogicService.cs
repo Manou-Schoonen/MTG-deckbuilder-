@@ -17,20 +17,20 @@ namespace WebAppMTGLogic.Services
             _scryfallService = scryfallService;
         }
 
-        public async Task<List<CardModel>> SearchCardsAsync(string searchText)
+        public async Task<List<CardModel>> SearchCardsAsync(string standardSearch)
         {
-            if (string.IsNullOrWhiteSpace(searchText))
+            if (string.IsNullOrWhiteSpace(standardSearch))
             {
                 return new List<CardModel>();
             }
 
-            var cards = await _scryfallService.SearchCardsAsync(searchText);
+            var cards = await _scryfallService.SearchCardsAsync(standardSearch);
 
             return cards.Select(c => new CardModel
             {
-                Id = c.Id,
                 Name = c.Name,
-                ImageUrl = c.ImageUris?.Normal
+                ImageUrl = c.ImageUris?.Normal,
+                ManaCost = c.ManaCost
             }).ToList();
         }
     }

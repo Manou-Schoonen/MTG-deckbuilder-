@@ -16,7 +16,7 @@ namespace WebAppMTG.Pages
         [BindProperty(SupportsGet = true)]
         public string? Query { get; set; }
         public string? ErrorMessage { get; set; }
-        public List<CardModel> Cards { get; set; } = new();
+        public List<CardReturnModel> Cards { get; set; } = new();
 
         public async Task OnGetAsync()
         {
@@ -24,7 +24,6 @@ namespace WebAppMTG.Pages
             {
                 Cards = await _cardLogicService.SearchCardsAsync(Query);
             }
-
         }
     }
 }

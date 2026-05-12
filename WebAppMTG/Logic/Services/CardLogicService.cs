@@ -1,8 +1,5 @@
-﻿using DAL.Models;
-using System;
-using System.Collections.Generic;
-using System.Net.Http.Json;
-using System.Text;
+﻿using System;
+using DAL.Models;
 using WebAppMTGDAL.Services;
 using WebAppMTGLogic.Models;
 
@@ -17,20 +14,40 @@ namespace WebAppMTGLogic.Services
             _scryfallService = scryfallService;
         }
 
-        public async Task<List<CardModel>> SearchCardsAsync(string standardSearch)
+        public async Task<List<CardReturnModel>> SearchCardsAsync(string standardSearch)
         {
             if (string.IsNullOrWhiteSpace(standardSearch))
             {
-                return new List<CardModel>();
+                return new List<CardReturnModel>();
             }
 
             var cards = await _scryfallService.SearchCardsAsync(standardSearch);
 
-            return cards.Select(c => new CardModel
+            return MapCards(cards);
+            
+        }
+        public async Task<List<CardReturnModel>> AdvancedSearchAsync(AdvancedSearchModel search)
+        {
+            var query = new QueryBuilder().Build(search);
+
+            if (string.IsNullOrWhiteSpace(query))
+                return new List<CardReturnModel>();
+
+            var cards = await _scryfallService.SearchCardsAsync(query);
+
+            return MapCards(cards);
+        }
+
+        private List<CardReturnModel> MapCards(List<ScryfallCardData> cards)
+        {
+            return cards.Select(c => new CardReturnModel
             {
                 Name = c.Name,
                 ImageUrl = c.ImageUris?.Normal,
-                ManaCost = c.ManaCost
+                ManaCost = c.ManaCost,
+                OracleText = c.OracleText,
+                Rarity = c.Rarity,
+                TypeLine = c.TypeLine
             }).ToList();
         }
     }

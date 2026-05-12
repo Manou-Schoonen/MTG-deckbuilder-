@@ -32,6 +32,7 @@ namespace DAL.Models
         public ImageUris? ImageUris { get; set; }
     }
 
+
     public class ImageUris
     {
         [JsonPropertyName("small")]

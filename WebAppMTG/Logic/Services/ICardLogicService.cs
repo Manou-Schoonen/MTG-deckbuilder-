@@ -8,6 +8,7 @@ namespace WebAppMTGLogic.Services
 {
     public interface ICardLogicService
     {
-        Task<List<CardModel>> SearchCardsAsync(string standardSearch);
+        Task<List<CardReturnModel>> SearchCardsAsync(string standardSearch);
+        Task<List<CardReturnModel>> AdvancedSearchAsync(AdvancedSearchModel search);
     }
 }

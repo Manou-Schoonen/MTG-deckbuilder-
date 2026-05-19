@@ -1,4 +1,59 @@
 ﻿@page
 @model WebAppMTG.Pages.DetailedCardOverviewModel
 @{
+    <h2>Kaartdetails</h2>
+
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+    else if (Model.Card == null)
+    {
+        <p>Geen kaartgegevens beschikbaar.</p>
+    }
+    else
+    {
+        <div class="card-detail-container">
+            <h3>@Model.Card.Name</h3>
+
+            @if (!string.IsNullOrEmpty(Model.Card.ImageUrl))
+            {
+                <img src="@Model.Card.ImageUrl" alt="@Model.Card.Name" class="card-detail-image" />
+            }
+
+            <p><strong>Mana Cost:</strong> @Model.Card.ManaCost</p>
+            <p><strong>Type:</strong> @Model.Card.TypeLine</p>
+
+            <h4>Oracle Text</h4>
+            <p style="white-space: pre-line;">@Model.Card.OracleText</p>
+
+            <h4>Legalities</h4>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Format</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>Standard</td><td>@Model.Card.Standard</td></tr>
+                    <tr><td>Historic</td><td>@Model.Card.Historic</td></tr>
+                    <tr><td>Gladiator</td><td>@Model.Card.Gladiator</td></tr>
+                    <tr><td>Pioneer</td><td>@Model.Card.Pioneer</td></tr>
+                    <tr><td>Modern</td><td>@Model.Card.Modern</td></tr>
+                    <tr><td>Legacy</td><td>@Model.Card.Legacy</td></tr>
+                    <tr><td>Pauper</td><td>@Model.Card.Pauper</td></tr>
+                    <tr><td>Vintage</td><td>@Model.Card.Vintage</td></tr>
+                    <tr><td>Penny</td><td>@Model.Card.Penny</td></tr>
+                    <tr><td>Commander</td><td>@Model.Card.Commander</td></tr>
+                    <tr><td>Brawl</td><td>@Model.Card.Brawl</td></tr>
+                    <tr><td>Alchemy</td><td>@Model.Card.Alchemy</td></tr>
+                    <tr><td>Oathbreaker</td><td>@Model.Card.Oathbreaker</td></tr>
+                    <tr><td>Timeless</td><td>@Model.Card.Timeless</td></tr>
+                </tbody>
+            </table>
+
+            <a asp-page="/CardOverview" class="btn btn-secondary">Terug</a>
+        </div>
+    }
 }

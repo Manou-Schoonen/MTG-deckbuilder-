@@ -8,5 +8,6 @@ namespace WebAppMTGDAL.Services
     public interface IScryfallService
     {
         Task<List<ScryfallCardData>> SearchCardsAsync(string standardSearch);
+        Task<ScryfallCardData?> GetCardByIdAsync(string id);
     }
 }

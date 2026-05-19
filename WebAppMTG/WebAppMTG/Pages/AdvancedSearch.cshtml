@@ -27,8 +27,8 @@
         </div>
 
         <div>
-            <label asp-for="Search.ManaCost">Mana Value</label>
-            <input asp-for="Search.ManaCost" type="number" />
+            <label asp-for="Search.ManaValue">Mana Value</label>
+            <input asp-for="Search.ManaValue" type="number" />
         </div>
         <div>
             <label asp-for="Search.Format">Format</label>
@@ -53,23 +53,4 @@
 
         <button type="submit">Search</button>
     </form>
-
-    @if (Model.Results.Any())
-    {
-        <hr />
-        <h2>Results</h2>
-
-        <div style="display:flex; flex-wrap:wrap; gap:20px;">
-            @foreach (var card in Model.Results)
-            {
-                <div style="width:220px;">
-                    @if (!string.IsNullOrWhiteSpace(card.ImageUrl))
-                    {
-                        <img src="@card.ImageUrl" alt="@card.Name" style="width:100%; border-radius:10px;" />
-                    }
-                    <p>@card.Name</p>
-                </div>
-            }
-        </div>
-    }
 }

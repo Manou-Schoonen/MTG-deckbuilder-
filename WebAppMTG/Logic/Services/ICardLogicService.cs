@@ -10,5 +10,6 @@ namespace WebAppMTGLogic.Services
     {
         Task<List<CardReturnModel>> SearchCardsAsync(string standardSearch);
         Task<List<CardReturnModel>> AdvancedSearchAsync(AdvancedSearchModel search);
+        Task<CardReturnModel?> GetCardByIdAsync(string id);
     }
 }

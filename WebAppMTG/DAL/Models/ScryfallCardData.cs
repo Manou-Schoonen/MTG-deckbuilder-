@@ -30,6 +30,9 @@ namespace DAL.Models
 
         [JsonPropertyName("image_uris")]
         public ImageUris? ImageUris { get; set; }
+
+        [JsonPropertyName("legalities")]
+        public ScryfallFormatLegality? FormatLegality { get; set; }
     }
 
 
@@ -45,29 +48,48 @@ namespace DAL.Models
         public string? Large { get; set; }
     }
 
-    public class Legalities
+    public class ScryfallFormatLegality
     {
         [JsonPropertyName("standard")]
         public string? Standard { get; set; }
-        [JsonPropertyName("future")]
-        public string? Future { get; set; }
+
         [JsonPropertyName("historic")]
         public string? Historic { get; set; }
+
         [JsonPropertyName("gladiator")]
         public string? Gladiator { get; set; }
+
         [JsonPropertyName("pioneer")]
         public string? Pioneer { get; set; }
+
         [JsonPropertyName("modern")]
         public string? Modern { get; set; }
+
         [JsonPropertyName("legacy")]
         public string? Legacy { get; set; }
+
         [JsonPropertyName("pauper")]
         public string? Pauper { get; set; }
+
         [JsonPropertyName("vintage")]
         public string? Vintage { get; set; }
+
         [JsonPropertyName("penny")]
         public string? Penny { get; set; }
+
         [JsonPropertyName("commander")]
         public string? Commander { get; set; }
+
+        [JsonPropertyName("alchemy")]
+        public string? Alchemy { get; set; }
+
+        [JsonPropertyName("brawl")]
+        public string? Brawl { get; set; }
+
+        [JsonPropertyName("oathbreaker")]
+        public string? Oathbreaker { get; set; }
+        
+        [JsonPropertyName("timeless")]
+        public string? Timeless { get; set; }
     }
 }

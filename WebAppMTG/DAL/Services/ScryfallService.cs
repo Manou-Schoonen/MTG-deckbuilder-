@@ -24,5 +24,10 @@ namespace DAL.Services
             var response = await httpResponse.Content.ReadFromJsonAsync<ScryfallSearchResponse>();
             return response?.Data ?? new List<ScryfallCardData>();
         }
+        public async Task<ScryfallCardData?> GetCardByIdAsync(string id)
+        {
+            var url = $"cards/{id}";
+            return await _httpClient.GetFromJsonAsync<ScryfallCardData>(url);
+        }
     }
 }

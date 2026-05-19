@@ -9,29 +9,20 @@ namespace WebAppMTG.Pages
 {
     public class AdvancedSearchModel : PageModel
     {
-        private readonly ICardLogicService _cardLogicService;
-
-        public AdvancedSearchModel(ICardLogicService cardLogicService)
-        {
-            _cardLogicService = cardLogicService;
-        }
 
         [BindProperty]
         public WebAppMTGLogic.Models.AdvancedSearchModel Search { get; set; } = new();
 
-        public List<CardReturnModel> Results { get; set; } = new();
-
-        public async Task OnPostAsync()
+        public IActionResult OnPost()
         {
-            Results = await _cardLogicService.AdvancedSearchAsync(Search);
+            return RedirectToPage("/CardOverview", new
+            {
+                Search.Name,
+                Search.Color,
+                Search.TypeLine,
+                Search.ManaValue,
+                Search.Format,
+            });
         }
     }
-
-    //public class SearchCriteria
-    //{
-    //    public string Name { get; set; }
-    //    public string Color { get; set; }
-    //    public string TypeLine { get; set; }
-    //    public string? ManaCost { get; set; }
-    //}
 }

@@ -26,8 +26,11 @@ else
                     {
                         <div class="no-image">Geen afbeelding</div>
                     }
-
                     <div class="card-name">@card.Name</div>
+
+                    <a asp-page="/DetailedCardOverview" asp-route-id="@card.Id" class="btn btn-primary mt-2">
+                        Bekijk details
+                    </a>
                 </div>
             </div>
         }

@@ -5,7 +5,7 @@ using WebAppMTGLogic.Models;
 
 namespace WebAppMTGLogic.Services
 {
-    public class QueryBuilder
+    public class QueryBuilderAdvanced
     {
         public string Build(AdvancedSearchModel search)
         {
@@ -20,14 +20,14 @@ namespace WebAppMTGLogic.Services
             if (!string.IsNullOrWhiteSpace(search.TypeLine))
                 parts.Add($"type:{search.TypeLine}");
 
-            if (!string.IsNullOrWhiteSpace(search.ManaCost))
-                parts.Add($"mv={search.ManaCost}");
+            if (!string.IsNullOrWhiteSpace(search.ManaValue))
+                parts.Add($"mv:{search.ManaValue}");
 
             if (!string.IsNullOrWhiteSpace(search.Color))
                 parts.Add($"color={search.Color}");
 
             if (!string.IsNullOrWhiteSpace(search.Format))
-                parts.Add($"format={search.Format}");
+                parts.Add($"format:{search.Format}");
 
             return string.Join(" ", parts);
         }

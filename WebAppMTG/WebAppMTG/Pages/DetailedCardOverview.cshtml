@@ -53,7 +53,23 @@
                 </tbody>
             </table>
 
-            <a asp-page="/CardOverview" class="btn btn-secondary">Terug</a>
+            @if (Model.LastSearch != null)
+            {
+                <a asp-page="/CardOverview"
+                   asp-route-query="@Model.LastSearch.Query"
+                   asp-route-name="@Model.LastSearch.Name"
+                   asp-route-typeLine="@Model.LastSearch.TypeLine"
+                   asp-route-color="@Model.LastSearch.Color"
+                   asp-route-manaValue="@Model.LastSearch.ManaValue"
+                   asp-route-format="@Model.LastSearch.Format"
+                   class="btn btn-secondary">
+                    Terug naar resultaten
+                </a>
+            }
+            else
+            {
+                <a asp-page="/Index" class="btn btn-secondary">Terug</a>
+            }
         </div>
     }
 }

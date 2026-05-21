@@ -10,8 +10,4 @@
     <ProjectReference Include="..\DAL\WebAppMTGDAL.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="FormatRules\" />
-  </ItemGroup>
-
 </Project>

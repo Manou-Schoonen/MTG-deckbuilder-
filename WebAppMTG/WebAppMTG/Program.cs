@@ -12,6 +12,8 @@ namespace WebAppMTG
 
             // Add services to the container.
             builder.Services.AddRazorPages();
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession();
 
             builder.Services.AddHttpClient<IScryfallService, ScryfallService>(client =>
             {
@@ -35,6 +37,8 @@ namespace WebAppMTG
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseSession();
 
             app.UseAuthorization();
 

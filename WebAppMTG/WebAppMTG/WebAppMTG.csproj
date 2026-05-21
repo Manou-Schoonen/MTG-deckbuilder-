@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Include="wwwroot\Extensions\SessionExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Logic\WebAppMTGLogic.csproj" />
   </ItemGroup>
 

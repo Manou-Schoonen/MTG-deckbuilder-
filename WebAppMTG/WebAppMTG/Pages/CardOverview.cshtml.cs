@@ -1,5 +1,6 @@
 using WebAppMTGLogic.Models;
 using WebAppMTGLogic.Services;
+using WebAppMTG.wwwroot.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -61,6 +62,18 @@ namespace WebAppMTG.Pages
                 {
                     Cards = await _cardLogicService.SearchCardsAsync(Query);
                 }
+                
+                HttpContext.Session.SetObject("LastSearchResults", Cards);
+
+                HttpContext.Session.SetObject("LastSearchParameters", new PreviousSearch
+                {
+                    Query = Query,
+                    Name = Name,
+                    TypeLine = TypeLine,
+                    Color = Color,
+                    ManaValue = ManaValue,
+                    Format = Format
+                });
             }
             catch (Exception ex)
             {

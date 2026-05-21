@@ -4,7 +4,8 @@ using System.Text;
 
 namespace WebAppMTGLogic.FormatRules
 {
-    internal class StandardRules
+    public class Standard : IRulesCheck
     {
+
     }
 }

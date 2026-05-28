@@ -1,8 +1,8 @@
-using WebAppMTGLogic.Models;
-using WebAppMTGLogic.Services;
 using WebAppMTG.wwwroot.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using WebAppMTGLogic.API.Interfaces;
+using WebAppMTGLogic.API.Models;
 
 namespace WebAppMTG.Pages
 {
@@ -49,7 +49,7 @@ namespace WebAppMTG.Pages
                 if (hasAdvancedSearch)
                 {
                     Cards = await _cardLogicService.AdvancedSearchAsync(
-                        new WebAppMTGLogic.Models.AdvancedSearchModel
+                        new WebAppMTGLogic.API.Models.AdvancedSearchModel
                         {
                             Name = Name,
                             Color = Color,

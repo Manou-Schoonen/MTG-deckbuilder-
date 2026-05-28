@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WebAppMTGLogic.Models;
+using WebAppMTGLogic.API.Models;
 
-namespace WebAppMTGLogic.Services
+namespace WebAppMTGLogic.API.Services
 {
     public class QueryBuilderAdvanced
     {

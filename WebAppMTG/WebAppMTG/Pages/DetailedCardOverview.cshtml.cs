@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebAppMTG.wwwroot.Extensions;
-using WebAppMTGLogic.Models;
+using WebAppMTGLogic.API.Models;
 using WebAppMTGLogic.Services;
 
 namespace WebAppMTG.Pages
@@ -40,16 +40,6 @@ namespace WebAppMTG.Pages
                 ErrorMessage = "Kaart niet gevonden in de laatste zoekresultaten.";
             }
         }
-    }
-
-    public class PreviousSearch
-    {
-        public string? Query { get; set; }
-        public string? Name { get; set; }
-        public string? TypeLine { get; set; }
-        public string? Color { get; set; }
-        public string? ManaValue { get; set; }
-        public string? Format { get; set; }
     }
 }
 

@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebAppMTGLogic.Models;
 using WebAppMTGLogic.Services;
 
 namespace WebAppMTG.Pages
@@ -11,7 +10,7 @@ namespace WebAppMTG.Pages
     {
 
         [BindProperty]
-        public WebAppMTGLogic.Models.AdvancedSearchModel Search { get; set; } = new();
+        public WebAppMTGLogic.API.Models.AdvancedSearchModel Search { get; set; } = new();
 
         public IActionResult OnPost()
         {

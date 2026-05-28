@@ -1,6 +1,11 @@
 using DAL.Services;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 using WebAppMTGDAL.Services;
+using WebAppMTGLogic.API.Interfaces;
+using WebAppMTGLogic.API.Services;
+using WebAppMTGLogic.Interfaces;
 using WebAppMTGLogic.Services;
+using WebAppMTGLogic.FormatRules;
 
 namespace WebAppMTG
 {
@@ -23,6 +28,8 @@ namespace WebAppMTG
             });
 
             builder.Services.AddScoped<ICardLogicService, CardLogicService>();
+            builder.Services.AddScoped<IDeckBuilderService, DeckBuilderService>();
+            builder.Services.AddScoped<ILegalityRule, Standard>();
 
             var app = builder.Build();
 

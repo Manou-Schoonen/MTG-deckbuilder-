@@ -5,9 +5,10 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using WebAppMTGDAL.Services;
-using WebAppMTGLogic.Models;
+using WebAppMTGLogic.API.Interfaces;
+using WebAppMTGLogic.API.Models;
 
-namespace WebAppMTGLogic.Services
+namespace WebAppMTGLogic.API.Services
 {
     public class CardLogicService : ICardLogicService
     {

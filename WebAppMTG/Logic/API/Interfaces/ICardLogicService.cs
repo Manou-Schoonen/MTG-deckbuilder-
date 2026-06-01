@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WebAppMTGDAL.Services;
+using WebAppMTGDAL.ScryfallAPI.Services;
 using WebAppMTGLogic.API.Models;
 
 namespace WebAppMTGLogic.API.Interfaces

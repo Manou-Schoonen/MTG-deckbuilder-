@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace DAL.Models
+namespace WebAppMTGDAL.ScryfallAPI.Models
 {
     public class ScryfallCardData
     {

@@ -9,6 +9,9 @@ namespace WebAppMTGLogic.Interfaces
     public interface ILegalityRule
     {
         string FormatName { get; }
+        int MainBoardCardLimit { get; }
+        int SideBoardCardLimit { get; }
+        int UniqueCardLimit { get; }
         DeckLegalityResult Validate(DeckModel deck);
     }
 }

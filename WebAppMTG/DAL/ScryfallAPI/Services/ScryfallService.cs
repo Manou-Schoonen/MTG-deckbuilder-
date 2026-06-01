@@ -1,11 +1,10 @@
-﻿using DAL.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Text;
-using WebAppMTGDAL.Services;
+using WebAppMTGDAL.ScryfallAPI.Models;
 
-namespace DAL.Services
+namespace WebAppMTGDAL.ScryfallAPI.Services
 {
     public class ScryfallService : IScryfallService
     {

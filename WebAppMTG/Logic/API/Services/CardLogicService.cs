@@ -1,10 +1,10 @@
-﻿using DAL.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
-using WebAppMTGDAL.Services;
+using WebAppMTGDAL.ScryfallAPI.Models;
+using WebAppMTGDAL.ScryfallAPI.Services;
 using WebAppMTGLogic.API.Interfaces;
 using WebAppMTGLogic.API.Models;
 

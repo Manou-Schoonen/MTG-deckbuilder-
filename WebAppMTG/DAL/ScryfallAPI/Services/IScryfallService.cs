@@ -1,9 +1,9 @@
-﻿using DAL.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using WebAppMTGDAL.ScryfallAPI.Models;
 
-namespace WebAppMTGDAL.Services
+namespace WebAppMTGDAL.ScryfallAPI.Services
 {
     public interface IScryfallService
     {

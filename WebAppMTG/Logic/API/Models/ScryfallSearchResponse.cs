@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.Json.Serialization;
 
-namespace WebAppMTGDAL.ScryfallAPI.Models
+namespace WebAppMTGLogic.API.Models
 {
     public class ScryfallSearchResponse
     {

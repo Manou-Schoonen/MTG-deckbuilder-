@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Net.Http.Json;
 using System.Text;
-using WebAppMTGDAL.ScryfallAPI.Models;
+using WebAppMTGLogic.API.Interfaces;
+using WebAppMTGLogic.API.Models;
 
 namespace WebAppMTGDAL.ScryfallAPI.Services
 {

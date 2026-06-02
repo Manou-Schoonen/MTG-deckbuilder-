@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\DAL\WebAppMTGDAL.csproj" />
     <ProjectReference Include="..\Logic\WebAppMTGLogic.csproj" />
   </ItemGroup>
 

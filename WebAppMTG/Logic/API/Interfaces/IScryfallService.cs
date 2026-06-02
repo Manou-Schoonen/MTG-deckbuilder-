@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WebAppMTGDAL.ScryfallAPI.Models;
+using WebAppMTGLogic.API.Models;
 
-namespace WebAppMTGDAL.ScryfallAPI.Services
+namespace WebAppMTGLogic.API.Interfaces
 {
     public interface IScryfallService
     {

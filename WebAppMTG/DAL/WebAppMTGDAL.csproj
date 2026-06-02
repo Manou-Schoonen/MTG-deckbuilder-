@@ -10,4 +10,8 @@
     <Folder Include="Database\Services\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Logic\WebAppMTGLogic.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,109 @@
+﻿@page
+@model WebAppMTG.Pages.DeckContentsModel
+@{
+    @if (Model.Deck == null)
+    {
+        <p>Deck niet gevonden.</p>
+        return;
+    }
+
+    <h2>@Model.Deck.Name</h2>
+
+    <p><strong>Format:</strong> @Model.Deck.Format</p>
+    <p><strong>Beschrijving:</strong> @Model.Deck.Description</p>
+
+    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger">@Model.ErrorMessage</div>
+    }
+
+    @if (Model.LegalityResult != null)
+    {
+        if (Model.LegalityResult.IsLegal)
+        {
+            <div class="alert alert-success">
+                Dit deck is legaal.
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-warning">
+                <strong>Dit deck is niet legaal.</strong>
+                <ul>
+                    @foreach (var error in Model.LegalityResult.Errors)
+                    {
+                        <li>@error</li>
+                    }
+                </ul>
+            </div>
+        }
+    }
+
+    <h3>Mainboard</h3>
+    @if (Model.Deck.Mainboard.Count == 0)
+    {
+        <p>Geen kaarten in mainboard.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Aantal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var card in Model.Deck.Mainboard)
+                {
+                    <tr>
+                        <td>@card.Card.Name</td>
+                        <td>@card.Quantity</td>
+                        <td>
+                            <form method="post" asp-page-handler="RemoveCard">
+                                <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
+                                <input type="hidden" name="cardEntryId" value="@card.Card.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Verwijderen</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <h3>Sideboard</h3>
+    @if (Model.Deck.Sideboard.Count == 0)
+    {
+        <p>Geen kaarten in sideboard.</p>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Naam</th>
+                    <th>Aantal</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var card in Model.Deck.Sideboard)
+                {
+                    <tr>
+                        <td>@card.Card.Name</td>
+                        <td>@card.Quantity</td>
+                        <td>
+                            <form method="post" asp-page-handler="RemoveCard">
+                                <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
+                                <input type="hidden" name="cardEntryId" value="@card.Card.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Verwijderen</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+}

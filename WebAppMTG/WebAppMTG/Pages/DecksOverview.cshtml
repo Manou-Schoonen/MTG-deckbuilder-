@@ -1,0 +1,37 @@
+﻿@page
+@model WebAppMTG.Pages.DecksOverviewModel
+@{
+    <h2>Mijn Decks</h2>
+    
+    <div class="mb-3">
+        <a asp-page="/CreateDeck" class="btn btn-success">Nieuw deck aanmaken</a>
+    </div>
+
+    @if (Model.Decks == null || Model.Decks.Count == 0)
+    {
+        <p>Je hebt nog geen decks.</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var deck in Model.Decks)
+            {
+                <div class="col-md-4 mb-3">
+                    <div class="card p-3">
+                        <h4>@deck.Name</h4>
+                        <p><strong>Format:</strong> @deck.Format</p>
+                        <p>@deck.Description</p>
+                        <p>
+                            <strong>Mainboard:</strong> @deck.Mainboard.Sum(c => c.Quantity)<br />
+                            <strong>Sideboard:</strong> @deck.Sideboard.Sum(c => c.Quantity)
+                        </p>
+
+                        <a asp-page="/DeckContents" asp-route-id="@deck.ItemId" class="btn btn-primary">
+                            Bekijk deck
+                        </a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+}

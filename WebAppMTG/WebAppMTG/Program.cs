@@ -5,6 +5,7 @@ using WebAppMTGLogic.Interfaces;
 using WebAppMTGLogic.Services;
 using WebAppMTGLogic.FormatRules;
 using WebAppMTGDAL.ScryfallAPI.Services;
+using WebAppMTGDAL.Database.Repos;
 
 namespace WebAppMTG
 {
@@ -27,8 +28,14 @@ namespace WebAppMTG
             });
 
             builder.Services.AddScoped<ICardLogicService, CardLogicService>();
-            builder.Services.AddScoped<IDeckBuilderService, DeckBuilderService>();
             builder.Services.AddScoped<ILegalityRule, Standard>();
+            builder.Services.AddScoped<IUserDeckService, UserDeckService>();
+
+            builder.Services.AddScoped<IMySQLDeckRepo>(sp =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                return new MySQLDeckRepo(connectionString!);
+            });
 
             var app = builder.Build();
 

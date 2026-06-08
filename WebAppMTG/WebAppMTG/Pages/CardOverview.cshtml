@@ -16,6 +16,8 @@ else
     <div class="card-grid">
         @foreach (var card in Model.Cards)
         {
+            var modalId = $"addToDeckModal_{card.Id}";
+
             <div class="card-item">
                 <div class="card-box">
                     @if (!string.IsNullOrEmpty(card.ImageUrl))
@@ -26,11 +28,71 @@ else
                     {
                         <div class="no-image">Geen afbeelding</div>
                     }
+
                     <div class="card-name">@card.Name</div>
 
                     <a asp-page="/DetailedCardOverview" asp-route-id="@card.Id" class="btn btn-primary mt-2">
                         Bekijk details
                     </a>
+
+                    <button type="button" class="btn btn-success mt-2"
+                            data-bs-toggle="modal"
+                            data-bs-target="#@modalId">
+                        Voeg toe aan deck
+                    </button>
+                </div>
+            </div>
+
+            <div class="modal fade" id="@modalId" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <form method="post" asp-page-handler="AddToDeck">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Voeg @card.Name toe aan een deck</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+
+                            <div class="modal-body">
+                                <input type="hidden" name="SelectedCardId" value="@card.Id" />
+
+                                <input type="hidden" name="Query" value="@Model.Query" />
+                                <input type="hidden" name="Name" value="@Model.Name" />
+                                <input type="hidden" name="TypeLine" value="@Model.TypeLine" />
+                                <input type="hidden" name="Color" value="@Model.Color" />
+                                <input type="hidden" name="ManaValue" value="@Model.ManaValue" />
+                                <input type="hidden" name="Format" value="@Model.Format" />
+
+                                <div class="mb-3">
+                                    <label class="form-label">Deck</label>
+                                    <select name="SelectedDeckId" class="form-select" required>
+                                        <option value="">-- Kies een deck --</option>
+                                        @foreach (var deck in Model.UserDecks)
+                                        {
+                                            <option value="@deck.ItemId">@deck.Name (@deck.Format)</option>
+                                        }
+                                    </select>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Aantal</label>
+                                    <input type="number" name="QuantityToAdd" value="1" min="1" class="form-control" />
+                                </div>
+
+                                <div class="mb-3">
+                                    <label class="form-label">Board part</label>
+                                    <select name="SelectedBoardPart" class="form-select">
+                                        <option value="Mainboard">Mainboard</option>
+                                        <option value="Sideboard">Sideboard</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+                                <button type="submit" class="btn btn-success">Toevoegen</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         }

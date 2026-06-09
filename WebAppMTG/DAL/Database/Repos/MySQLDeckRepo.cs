@@ -188,18 +188,18 @@ namespace WebAppMTGDAL.Database.Repos
             return Convert.ToInt32(result);
         }
 
-        public async Task RemoveCardFromDeckAsync(int itemId, int cardEntryId)
+        public async Task RemoveCardFromDeckAsync(int itemId, string cardId)
         {
             await using var connection = new MySqlConnection(_connectionString);
             await connection.OpenAsync();
 
             const string sql = @"
         DELETE FROM item_card_references
-        WHERE id = @id AND item_id = @itemId;
+        WHERE card_id = @cardId AND item_id = @itemId;
     ";
 
             await using var cmd = new MySqlCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@id", cardEntryId);
+            cmd.Parameters.AddWithValue("@cardId", cardId);
             cmd.Parameters.AddWithValue("@itemId", itemId);
 
             await cmd.ExecuteNonQueryAsync();

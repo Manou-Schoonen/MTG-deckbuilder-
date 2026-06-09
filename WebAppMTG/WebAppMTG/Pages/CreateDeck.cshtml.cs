@@ -36,7 +36,7 @@ namespace WebAppMTG.Pages
 
                 var deckId = await _userDeckService.CreateDeckAsync(userId, Name, Format, Description);
 
-                return RedirectToPage("/Decks/Details", new { id = deckId });
+                return RedirectToPage("/DeckContents", new { id = deckId });
             }
             catch (Exception ex)
             {

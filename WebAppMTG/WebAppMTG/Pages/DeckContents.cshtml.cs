@@ -32,7 +32,7 @@ namespace WebAppMTG.Pages
             return Page();
         }
 
-        public async Task<IActionResult> OnPostRemoveCardAsync(int itemId, int cardEntryId)
+        public async Task<IActionResult> OnPostRemoveCardAsync(int itemId, string cardEntryId)
         {
             try
             {

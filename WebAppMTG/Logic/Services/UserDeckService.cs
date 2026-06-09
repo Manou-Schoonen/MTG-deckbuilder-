@@ -97,7 +97,7 @@ namespace WebAppMTGLogic.Services
             await _mysqlDeckRepo.AddCardToDeckAsync(itemId, cardId, quantity, boardPart);
         }
 
-        public async Task RemoveCardFromDeckAsync(int userId, int itemId, int cardEntryId)
+        public async Task RemoveCardFromDeckAsync(int userId, int itemId, string cardEntryId)
         {
             var deckRecord = await _mysqlDeckRepo.GetDeckRecordByIdAsync(itemId);
             if (deckRecord == null)

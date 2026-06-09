@@ -11,7 +11,7 @@ namespace WebAppMTGLogic.Interfaces
         Task<DeckModel?> GetDeckByIdAsync(int itemId);
         Task<int> CreateDeckAsync(int userId, string name, string format, string description);
         Task AddCardToDeckAsync(int userId, int itemId, string cardId, int quantity, BoardPart boardPart);
-        Task RemoveCardFromDeckAsync(int userId, int itemId, int cardEntryId);
+        Task RemoveCardFromDeckAsync(int userId, int itemId, string cardEntryId);
         Task<DeckModel> BuildDeckAsync(IEnumerable<DeckCardEntry> entries);
 
         Task<DeckLegalityResult> ValidateDeckAsync(int itemId);

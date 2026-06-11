@@ -48,20 +48,20 @@ namespace WebAppMTGLogic.Services
 
         public async Task<DeckModel?> GetDeckByIdAsync(int itemId)
         {
-            var record = await _mysqlDeckRepo.GetDeckRecordByIdAsync(itemId);
-            if (record == null)
+            var deckRecord = await _mysqlDeckRepo.GetDeckRecordByIdAsync(itemId);
+            if (deckRecord == null)
                 return null;
 
             var entries = await _mysqlDeckRepo.GetDeckEntriesByItemIdAsync(itemId);
-            var deck = await BuildDeckAsync(entries);
+            var deckModel = await BuildDeckAsync(entries);
 
-            deck.ItemId = record.ItemId.ToString();
-            deck.UserId = record.UserId.ToString();
-            deck.Name = record.Name;
-            deck.Format = record.Format;
-            deck.Description = record.Description;
+            deckModel.ItemId = deckRecord.ItemId.ToString();
+            deckModel.UserId = deckRecord.UserId.ToString();
+            deckModel.Name = deckRecord.Name;
+            deckModel.Format = deckRecord.Format;
+            deckModel.Description = deckRecord.Description;
 
-            return deck;
+            return deckModel;
         }
 
         public async Task<int> CreateDeckAsync(int userId, string name, string format, string description)

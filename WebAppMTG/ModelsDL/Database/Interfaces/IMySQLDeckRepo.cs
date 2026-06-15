@@ -1,7 +1,7 @@
-﻿using System;
+﻿using ModelsDL.Database.Models;
+using System;
 using System.Collections.Generic;
 using System.Text;
-using WebAppMTGLogic.Models;
 
 namespace WebAppMTGLogic.Interfaces
 {

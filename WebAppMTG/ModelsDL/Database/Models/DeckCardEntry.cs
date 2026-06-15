@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WebAppMTGLogic.Models
+namespace ModelsDL.Database.Models
 {
     public class DeckCardEntry
     {
@@ -11,5 +11,10 @@ namespace WebAppMTGLogic.Models
         public string CardId { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public BoardPart BoardPart { get; set; }
+    }
+    public enum BoardPart
+    {
+        Mainboard,
+        Sideboard
     }
 }

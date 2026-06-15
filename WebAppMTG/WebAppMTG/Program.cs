@@ -2,10 +2,12 @@ using Microsoft.AspNetCore.Cors.Infrastructure;
 using WebAppMTGLogic.API.Interfaces;
 using WebAppMTGLogic.API.Services;
 using WebAppMTGLogic.Interfaces;
-using WebAppMTGLogic.Services;
-using WebAppMTGLogic.FormatRules;
 using WebAppMTGDAL.ScryfallAPI.Services;
 using WebAppMTGDAL.Database.Repos;
+using WebAppMTGLogic.Database.Interfaces;
+using WebAppMTGLogic.Database.Services;
+using WebAppMTGLogic.FormatRules.Interface;
+using WebAppMTGLogic.FormatRules.Formats;
 
 namespace WebAppMTG
 {

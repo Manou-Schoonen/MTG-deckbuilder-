@@ -3,9 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 using WebAppMTGLogic.API.Interfaces;
 using WebAppMTGLogic.Interfaces;
-using WebAppMTGLogic.Models;
+using ModelsDL.Database.Models;
+using WebAppMTGLogic.Database.Interfaces;
+using WebAppMTGLogic.Database.Models;
+using WebAppMTGLogic.FormatRules.Interface;
 
-namespace WebAppMTGLogic.Services
+
+namespace WebAppMTGLogic.Database.Services
 {
     public class UserDeckService : IUserDeckService
     {
@@ -32,15 +36,15 @@ namespace WebAppMTGLogic.Services
             foreach (var record in deckRecords)
             {
                 var entries = await _mysqlDeckRepo.GetDeckEntriesByItemIdAsync(record.ItemId);
-                var deck = await BuildDeckAsync(entries);
+                var deckModel = await BuildDeckAsync(entries);
 
-                deck.ItemId = record.ItemId.ToString();
-                deck.UserId = record.UserId.ToString();
-                deck.Name = record.Name;
-                deck.Format = record.Format;
-                deck.Description = record.Description;
+                deckModel.ItemId = record.ItemId.ToString();
+                deckModel.UserId = record.UserId.ToString();
+                deckModel.Name = record.Name;
+                deckModel.Format = record.Format;
+                deckModel.Description = record.Description;
 
-                result.Add(deck);
+                result.Add(deckModel);
             }
 
             return result;
@@ -125,7 +129,7 @@ namespace WebAppMTGLogic.Services
                     DeckCardEntryId = cardEntry.Id,
                     Card = card,
                     Quantity = cardEntry.Quantity,
-                    BoardPart = cardEntry.BoardPart
+                    BoardPart = (BoardPart)cardEntry.BoardPart // !!!!!  ModelsDL.Database.Models.
                 };
 
                 if (cardEntry.BoardPart == BoardPart.Mainboard)

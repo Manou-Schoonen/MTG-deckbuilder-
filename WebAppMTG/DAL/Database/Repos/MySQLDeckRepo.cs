@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ModelsDL.Database.Models;
 using MySqlConnector;
 using WebAppMTGLogic.Interfaces;
-using WebAppMTGLogic.Models;
 
 namespace WebAppMTGDAL.Database.Repos
 {

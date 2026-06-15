@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace WebAppMTGLogic.Models
+namespace ModelsDL.Database.Models
 {
     public class DeckRecord
     {

@@ -1,10 +1,11 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using ModelsDL.Database.Models;
 using WebAppMTG.wwwroot.Extensions;
 using WebAppMTGLogic.API.Interfaces;
 using WebAppMTGLogic.API.Models;
-using WebAppMTGLogic.Interfaces;
-using WebAppMTGLogic.Models;
+using WebAppMTGLogic.Database.Interfaces;
+using WebAppMTGLogic.Database.Models;
 
 namespace WebAppMTG.Pages
 {

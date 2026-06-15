@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WebAppMTGLogic.Models;
+using ModelsDL.Database.Models;
+using WebAppMTGLogic.Database.Models;
 
-namespace WebAppMTGLogic.Interfaces
+namespace WebAppMTGLogic.Database.Interfaces
 {
     public interface IUserDeckService
     {

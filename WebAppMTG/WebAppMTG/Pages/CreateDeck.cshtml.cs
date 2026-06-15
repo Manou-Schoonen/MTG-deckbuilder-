@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using WebAppMTGLogic.Interfaces;
+using WebAppMTGLogic.Database.Interfaces;
 
 namespace WebAppMTG.Pages
 {

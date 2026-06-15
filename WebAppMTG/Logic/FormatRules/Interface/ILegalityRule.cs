@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using WebAppMTGLogic.API.Models;
-using WebAppMTGLogic.Models;
+using WebAppMTGLogic.Database.Models;
 
-namespace WebAppMTGLogic.Interfaces
+namespace WebAppMTGLogic.FormatRules.Interface
 {
     public interface ILegalityRule
     {

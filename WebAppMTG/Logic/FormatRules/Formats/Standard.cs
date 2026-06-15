@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using WebAppMTGLogic.Interfaces;
-using WebAppMTGLogic.Models;
+using WebAppMTGLogic.Database.Models;
+using WebAppMTGLogic.FormatRules.Interface;
 
-namespace WebAppMTGLogic.FormatRules
+namespace WebAppMTGLogic.FormatRules.Formats
 {
     public class Standard : ILegalityRule
     {

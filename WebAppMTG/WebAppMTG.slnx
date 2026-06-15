@@ -1,6 +1,7 @@
 <Solution>
   <Project Path="DAL/WebAppMTGDAL.csproj" />
   <Project Path="Logic/WebAppMTGLogic.csproj" />
+  <Project Path="ModelsDL/WebAppMTGModelsDL.csproj" Id="9e00cd7c-47b6-42fd-88ce-631519dc72fe" />
   <Project Path="ScryfallAPI.test/UnitTests.test.csproj" Id="da200b27-ccc2-400b-bf2f-2181512cf13c" />
   <Project Path="WebAppMTG/WebAppMTG.csproj" />
 </Solution>

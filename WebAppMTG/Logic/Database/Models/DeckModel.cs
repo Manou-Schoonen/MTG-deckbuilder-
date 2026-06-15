@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using WebAppMTGLogic.API.Models;
 
-namespace WebAppMTGLogic.Models
+namespace WebAppMTGLogic.Database.Models
 {
     public class DeckModel
     {

@@ -1,12 +1,10 @@
 ﻿using ModelsDL.Database.Models;
 using WebAppMTGDAL.Database.Repos;
-using WebAppMTGLogic.API.Interfaces;
 using WebAppMTGLogic.API.Models;
 using WebAppMTGLogic.API.Services;
 using WebAppMTGLogic.Database.Models;
 using WebAppMTGLogic.Database.Services;
 using WebAppMTGLogic.FormatRules.Formats;
-using WebAppMTGLogic.Interfaces;
 
 namespace ScryfallAPI.test
 {

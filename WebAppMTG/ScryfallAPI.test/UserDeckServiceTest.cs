@@ -31,19 +31,18 @@ namespace ScryfallAPI.test
         public async Task CreateDeckAsync_ReturnsDeckId_WhenInputIsValid()
         {
             // Arrange
-            _repoFake.CreateDeckResult = 42;
+            _repoFake.CreateDeckResult = 32;
 
             // Act
             var result = await _service.CreateDeckAsync(1, "My Deck", "Standard", "desc");
 
             // Assert
-            Assert.Equal(42, result);
+            Assert.Equal(32, result);
         }
 
         [Fact]
         public async Task CreateDeckAsync_ThrowsArgumentException_WhenNameIsEmpty()
         {
-            // Act + Assert
             await Assert.ThrowsAsync<ArgumentException>(() =>
                 _service.CreateDeckAsync(1, "", "Standard", "desc"));
         }
@@ -58,7 +57,6 @@ namespace ScryfallAPI.test
         [Fact]
         public async Task GetDeckByIdAsync_ReturnsDeckModel_WhenDeckExists()
         {
-            // Arrange
             var deckRecord = new DeckRecord
             {
                 ItemId = 1,
@@ -73,10 +71,8 @@ namespace ScryfallAPI.test
             _repoFake.DeckRecords.Add(deckRecord);
             _repoFake.DeckEntriesByItemId[1] = entries;
 
-            // Act
             var result = await _service.GetDeckByIdAsync(1);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal("1", result.ItemId);
             Assert.Equal("2", result.UserId);
@@ -87,20 +83,16 @@ namespace ScryfallAPI.test
         [Fact]
         public async Task GetDeckByIdAsync_ReturnsNull_WhenDeckDoesNotExist()
         {
-            // Arrange
             _repoFake.DeckRecords.Clear();
 
-            // Act
             var result = await _service.GetDeckByIdAsync(99);
 
-            // Assert
             Assert.Null(result);
         }
 
         [Fact]
         public async Task AddCardToDeckAsync_CallsRepository_WhenInputIsValid()
         {
-            // Arrange
             var deckRecord = new DeckRecord
             {
                 ItemId = 1,
@@ -117,10 +109,8 @@ namespace ScryfallAPI.test
 
             _cardLogicFake.CardsById["card-123"] = card;
 
-            // Act
             await _service.AddCardToDeckAsync(10, 1, "card-123", 2, BoardPart.Mainboard);
 
-            // Assert
             Assert.True(_repoFake.AddCardToDeckWasCalled);
             Assert.Equal(1, _repoFake.AddCardToDeck_ItemId);
             Assert.Equal("card-123", _repoFake.AddCardToDeck_CardId);
@@ -243,7 +233,6 @@ namespace ScryfallAPI.test
         [Fact]
         public async Task BuildDeckAsync_AddsCardsToCorrectBoardParts()
         {
-            // Arrange
             var entries = new List<DeckCardEntry>
         {
         new DeckCardEntry
@@ -265,10 +254,8 @@ namespace ScryfallAPI.test
             _cardLogicFake.CardsById["card-main"] = new CardReturnModel { Name = "Main Card" };
             _cardLogicFake.CardsById["card-side"] = new CardReturnModel { Name = "Side Card" };
 
-            // Act
             var result = await _service.BuildDeckAsync(entries);
 
-            // Assert
             Assert.Single(result.Mainboard);
             Assert.Single(result.Sideboard);
             Assert.Equal(2, result.Mainboard[0].Quantity);

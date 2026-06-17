@@ -1,37 +1,62 @@
 ﻿@page
 @model WebAppMTG.Pages.DecksOverviewModel
 @{
-    <h2>Mijn Decks</h2>
-    
-    <div class="mb-3">
-        <a asp-page="/CreateDeck" class="btn btn-success">Nieuw deck aanmaken</a>
-    </div>
+    ViewData["Title"] = "Mijn Decks";
+}
 
-    @if (Model.Decks == null || Model.Decks.Count == 0)
-    {
-        <p>Je hebt nog geen decks.</p>
-    }
-    else
-    {
-        <div class="row">
-            @foreach (var deck in Model.Decks)
-            {
-                <div class="col-md-4 mb-3">
-                    <div class="card p-3">
-                        <h4>@deck.Name</h4>
-                        <p><strong>Format:</strong> @deck.Format</p>
-                        <p>@deck.Description</p>
-                        <p>
-                            <strong>Mainboard:</strong> @deck.Mainboard.Sum(c => c.Quantity)<br />
-                            <strong>Sideboard:</strong> @deck.Sideboard.Sum(c => c.Quantity)
-                        </p>
+<section class="decks-page">
+    <div class="decks-container">
+        <div class="decks-header">
+            <div>
+                <h1>Mijn Decks</h1>
+                <p>Beheer je decks en bekijk hun inhoud.</p>
+            </div>
 
-                        <a asp-page="/DeckContents" asp-route-id="@deck.ItemId" class="btn btn-primary">
+            <a asp-page="/CreateDeck" class="primary-action-button">
+                Nieuw deck aanmaken
+            </a>
+        </div>
+
+        @if (Model.Decks == null || Model.Decks.Count == 0)
+        {
+            <div class="empty-state">
+                <p>Je hebt nog geen decks.</p>
+            </div>
+        }
+        else
+        {
+            <div class="deck-grid">
+                @foreach (var deck in Model.Decks)
+                {
+                    <div class="deck-card">
+                        <div class="deck-card-content">
+                            <div class="deck-card-top">
+                                <h3>@deck.Name</h3>
+                                <span class="deck-format-badge">@deck.Format</span>
+                            </div>
+
+                            <p class="deck-description">
+                                @(string.IsNullOrWhiteSpace(deck.Description) ? "Geen beschrijving opgegeven." : deck.Description)
+                            </p>
+
+                            <div class="deck-stats">
+                                <div class="deck-stat">
+                                    <span class="deck-stat-label">Mainboard</span>
+                                    <span class="deck-stat-value">@deck.Mainboard.Sum(c => c.Quantity)</span>
+                                </div>
+                                <div class="deck-stat">
+                                    <span class="deck-stat-label">Sideboard</span>
+                                    <span class="deck-stat-value">@deck.Sideboard.Sum(c => c.Quantity)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a asp-page="/DeckContents" asp-route-id="@deck.ItemId" class="secondary-action-button deck-view-button">
                             Bekijk deck
                         </a>
                     </div>
-                </div>
-            }
-        </div>
-    }
-}
+                }
+            </div>
+        }
+    </div>
+</section>

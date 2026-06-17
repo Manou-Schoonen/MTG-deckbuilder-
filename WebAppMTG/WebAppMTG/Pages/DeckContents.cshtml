@@ -1,109 +1,298 @@
 ﻿@page
 @model WebAppMTG.Pages.DeckContentsModel
+@using System.Globalization
 @{
-    @if (Model.Deck == null)
+    ViewData["Title"] = "Deck inhoud";
+}
+
+@functions {
+    public string GetCardTypeGroup(string? typeLine)
     {
-        <p>Deck niet gevonden.</p>
-        return;
+        if (string.IsNullOrWhiteSpace(typeLine))
+            return "Overig";
+
+        var lower = typeLine.ToLower();
+
+        if (lower.Contains("creature")) return "Creatures";
+        if (lower.Contains("instant")) return "Instants";
+        if (lower.Contains("sorcery")) return "Sorceries";
+        if (lower.Contains("artifact")) return "Artifacts";
+        if (lower.Contains("enchantment")) return "Enchantments";
+        if (lower.Contains("planeswalker")) return "Planeswalkers";
+        if (lower.Contains("land")) return "Lands";
+        if (lower.Contains("battle")) return "Battles";
+
+        return "Overig";
     }
 
-    <h2>@Model.Deck.Name</h2>
-
-    <p><strong>Format:</strong> @Model.Deck.Format</p>
-    <p><strong>Beschrijving:</strong> @Model.Deck.Description</p>
-
-    @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+    public int GetTypeOrder(string? typeLine)
     {
-        <div class="alert alert-danger">@Model.ErrorMessage</div>
-    }
+        var group = GetCardTypeGroup(typeLine);
 
-    @if (Model.LegalityResult != null)
-    {
-        if (Model.LegalityResult.IsLegal)
+        return group switch
         {
-            <div class="alert alert-success">
-                Dit deck is legaal.
+            "Creatures" => 1,
+            "Instants" => 2,
+            "Sorceries" => 3,
+            "Artifacts" => 4,
+            "Enchantments" => 5,
+            "Planeswalkers" => 6,
+            "Lands" => 7,
+            "Battles" => 8,
+            _ => 9
+        };
+    }
+
+    public string ToSafeId(string value)
+    {
+        return value.ToLower().Replace(" ", "-");
+    }
+}
+
+<section class="deck-contents-page">
+    <div class="deck-contents-container">
+
+        <div class="detail-topbar">
+            <a asp-page="/DecksOverview" class="back-link-top">
+                ← Terug naar decks
+            </a>
+        </div>
+
+        @if (Model.Deck == null)
+        {
+            <div class="empty-state">
+                <p>Deck niet gevonden.</p>
             </div>
         }
         else
         {
-            <div class="alert alert-warning">
-                <strong>Dit deck is niet legaal.</strong>
-                <ul>
-                    @foreach (var error in Model.LegalityResult.Errors)
-                    {
-                        <li>@error</li>
-                    }
-                </ul>
+            <div class="deck-hero">
+                <div class="deck-hero-main">
+                    <h1>@Model.Deck.Name</h1>
+                    <p>@(string.IsNullOrWhiteSpace(Model.Deck.Description) ? "Geen beschrijving opgegeven." : Model.Deck.Description)</p>
+                </div>
+
+                <div class="deck-hero-meta">
+                    <div class="deck-meta-card">
+                        <span class="deck-meta-label">Format</span>
+                        <span class="deck-meta-value">@Model.Deck.Format</span>
+                    </div>
+                    <div class="deck-meta-card">
+                        <span class="deck-meta-label">Mainboard</span>
+                        <span class="deck-meta-value">@Model.Deck.Mainboard.Sum(c => c.Quantity)</span>
+                    </div>
+                    <div class="deck-meta-card">
+                        <span class="deck-meta-label">Sideboard</span>
+                        <span class="deck-meta-value">@Model.Deck.Sideboard.Sum(c => c.Quantity)</span>
+                    </div>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+            {
+                <div class="custom-alert custom-alert-danger">@Model.ErrorMessage</div>
+            }
+
+            @if (Model.LegalityResult != null)
+            {
+                @if (Model.LegalityResult.IsLegal)
+                {
+                    <div class="custom-alert deck-alert-success">
+                        Dit deck is legaal.
+                    </div>
+                }
+                else
+                {
+                    <div class="custom-alert deck-alert-warning">
+                        <strong>Dit deck is niet legaal.</strong>
+                        <ul class="deck-error-list">
+                            @foreach (var error in Model.LegalityResult.Errors)
+                            {
+                                <li>@error</li>
+                            }
+                        </ul>
+                    </div>
+                }
+            }
+
+            <div class="deck-section">
+                <div class="deck-section-header">
+                    <h2>Mainboard</h2>
+                </div>
+
+                @if (Model.Deck.Mainboard.Count == 0)
+                {
+                    <div class="empty-state">
+                        <p>Geen kaarten in mainboard.</p>
+                    </div>
+                }
+                else
+                {
+                    var groupedMainboard = Model.Deck.Mainboard
+                        .OrderBy(c => GetTypeOrder(c.Card.TypeLine))
+                        .ThenBy(c => c.Card.Name)
+                        .GroupBy(c => GetCardTypeGroup(c.Card.TypeLine));
+
+                    <div class="deck-type-columns">
+                        @foreach (var group in groupedMainboard)
+                        {
+                            <div class="deck-type-group">
+                                <div class="deck-type-group-header">
+                                    <h3>@group.Key</h3>
+                                    <span>@group.Sum(x => x.Quantity) kaarten</span>
+                                </div>
+
+                                <div class="deck-type-card-list">
+                                    @foreach (var card in group)
+                                    {
+                                        var cardElementId = $"main-{ToSafeId(group.Key)}-{card.Card.Id}";
+                                        <div class="deck-card-entry-big compact-card" id="@cardElementId">
+                                            <div class="deck-card-entry-top">
+                                                <div class="deck-card-entry-info">
+                                                    <h4>@card.Card.Name</h4>
+                                                    <p class="deck-card-entry-type">@card.Card.TypeLine</p>
+                                                </div>
+
+                                                <div class="card-inline-controls">
+                                                    <span class="deck-quantity-badge">x @card.Quantity</span>
+
+                                                    <button type="button"
+                                                            class="card-size-toggle-button"
+                                                            onclick="toggleCardSize('@cardElementId', this)">
+                                                        Groot tonen
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="deck-card-entry-visual">
+                                                @if (!string.IsNullOrWhiteSpace(card.Card.ImageUrl))
+                                                {
+                                                    <img src="@card.Card.ImageUrl" alt="@card.Card.Name" class="deck-card-large-image" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="deck-card-large-image no-deck-card-image">
+                                                        <span>Geen afbeelding</span>
+                                                    </div>
+                                                }
+                                            </div>
+
+                                            <div class="deck-card-entry-footer">
+                                                <form method="post" asp-page-handler="RemoveCard">
+                                                    <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
+                                                    <input type="hidden" name="cardEntryId" value="@card.Card.Id" />
+                                                    <button type="submit" class="danger-action-button">Verwijderen</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                
+                }
+            </div>
+
+            <div class="deck-section">
+                <div class="deck-section-header">
+                    <h2>Sideboard</h2>
+                </div>
+
+                @if (Model.Deck.Sideboard.Count == 0)
+                {
+                    <div class="empty-state">
+                        <p>Geen kaarten in sideboard.</p>
+                    </div>
+                }
+                else
+                {
+                    var groupedSideboard = Model.Deck.Sideboard
+                        .OrderBy(c => GetTypeOrder(c.Card.TypeLine))
+                        .ThenBy(c => c.Card.Name)
+                        .GroupBy(c => GetCardTypeGroup(c.Card.TypeLine));
+
+                    <div class="deck-type-columns">
+                        @foreach (var group in groupedSideboard)
+                        {
+                            <div class="deck-type-group">
+                                <div class="deck-type-group-header">
+                                    <h3>@group.Key</h3>
+                                    <span>@group.Sum(x => x.Quantity) kaarten</span>
+                                </div>
+
+                                <div class="deck-type-card-list">
+                                    @foreach (var card in group)
+                                    {
+                                        var cardElementId = $"main-{ToSafeId(group.Key)}-{card.Card.Id}";
+                                        <div class="deck-card-entry-big compact-card" id="@cardElementId">
+                                            <div class="deck-card-entry-top">
+                                                <div class="deck-card-entry-info">
+                                                    <h4>@card.Card.Name</h4>
+                                                    <p class="deck-card-entry-type">@card.Card.TypeLine</p>
+                                                </div>
+
+                                                <div class="card-inline-controls">
+                                                    <span class="deck-quantity-badge">x @card.Quantity</span>
+
+                                                    <button type="button"
+                                                            class="card-size-toggle-button"
+                                                            onclick="toggleCardSize('@cardElementId', this)">
+                                                        Groot tonen
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                            <div class="deck-card-entry-visual">
+                                                @if (!string.IsNullOrWhiteSpace(card.Card.ImageUrl))
+                                                {
+                                                    <img src="@card.Card.ImageUrl" alt="@card.Card.Name" class="deck-card-large-image" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="deck-card-large-image no-deck-card-image">
+                                                        <span>Geen afbeelding</span>
+                                                    </div>
+                                                }
+                                            </div>
+
+                                            <div class="deck-card-entry-footer">
+                                                <form method="post" asp-page-handler="RemoveCard">
+                                                    <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
+                                                    <input type="hidden" name="cardEntryId" value="@card.Card.Id" />
+                                                    <button type="submit" class="danger-action-button">Verwijderen</button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                
+                }
             </div>
         }
-    }
+    </div>
+</section>
 
-    <h3>Mainboard</h3>
-    @if (Model.Deck.Mainboard.Count == 0)
-    {
-        <p>Geen kaarten in mainboard.</p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Naam</th>
-                    <th>Aantal</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var card in Model.Deck.Mainboard)
-                {
-                    <tr>
-                        <td>@card.Card.Name</td>
-                        <td>@card.Quantity</td>
-                        <td>
-                            <form method="post" asp-page-handler="RemoveCard">
-                                <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
-                                <input type="hidden" name="cardEntryId" value="@card.Card.Id" />
-                                <button type="submit" class="btn btn-danger btn-sm">Verwijderen</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
+@section Scripts {
+    <script>
+        function toggleCardSize(cardId, button) {
+            const card = document.getElementById(cardId);
+            if (!card) return;
 
-    <h3>Sideboard</h3>
-    @if (Model.Deck.Sideboard.Count == 0)
-    {
-        <p>Geen kaarten in sideboard.</p>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Naam</th>
-                    <th>Aantal</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var card in Model.Deck.Sideboard)
-                {
-                    <tr>
-                        <td>@card.Card.Name</td>
-                        <td>@card.Quantity</td>
-                        <td>
-                            <form method="post" asp-page-handler="RemoveCard">
-                                <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
-                                <input type="hidden" name="cardEntryId" value="@card.Card.Id" />
-                                <button type="submit" class="btn btn-danger btn-sm">Verwijderen</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    }
+            const isCompact = card.classList.contains("compact-card");
+
+            card.classList.remove("compact-card", "large-card");
+
+            if (isCompact) {
+                card.classList.add("large-card");
+                button.textContent = "Klein tonen";
+            } else {
+                card.classList.add("compact-card");
+                button.textContent = "Groot tonen";
+            }
+        }
+    </script>
 }

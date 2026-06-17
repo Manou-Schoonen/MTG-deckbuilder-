@@ -1,58 +1,30 @@
 ﻿@page
 @model WebAppMTG.Pages.DetailedCardOverviewModel
 @{
-    <h2>Kaartdetails</h2>
+    ViewData["Title"] = "Kaartdetails";
+}
 
-    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+@functions {
+    public string GetLegalityClass(string status)
     {
-        <div class="alert alert-danger">@Model.ErrorMessage</div>
+        if (string.IsNullOrWhiteSpace(status))
+            return "legality-neutral";
+
+        return status.ToLower() switch
+        {
+            "legal" => "legality-legal",
+            "not_legal" => "legality-not-legal",
+            "banned" => "legality-banned",
+            "restricted" => "legality-restricted",
+            _ => "legality-neutral"
+        };
     }
-    else if (Model.Card == null)
-    {
-        <p>Geen kaartgegevens beschikbaar.</p>
-    }
-    else
-    {
-        <div class="card-detail-container">
-            <h3>@Model.Card.Name</h3>
+}
 
-            @if (!string.IsNullOrEmpty(Model.Card.ImageUrl))
-            {
-                <img src="@Model.Card.ImageUrl" alt="@Model.Card.Name" class="card-detail-image" />
-            }
+<section class="detailed-card-page">
+    <div class="detailed-card-container">
 
-            <p><strong>Mana Cost:</strong> @Model.Card.ManaCost</p>
-            <p><strong>Type:</strong> @Model.Card.TypeLine</p>
-
-            <h4>Oracle Text</h4>
-            <p style="white-space: pre-line;">@Model.Card.OracleText</p>
-
-            <h4>Legalities</h4>
-            <table class="table table-striped">
-                <thead>
-                    <tr>
-                        <th>Format</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Standard</td><td>@Model.Card.Standard</td></tr>
-                    <tr><td>Historic</td><td>@Model.Card.Historic</td></tr>
-                    <tr><td>Gladiator</td><td>@Model.Card.Gladiator</td></tr>
-                    <tr><td>Pioneer</td><td>@Model.Card.Pioneer</td></tr>
-                    <tr><td>Modern</td><td>@Model.Card.Modern</td></tr>
-                    <tr><td>Legacy</td><td>@Model.Card.Legacy</td></tr>
-                    <tr><td>Pauper</td><td>@Model.Card.Pauper</td></tr>
-                    <tr><td>Vintage</td><td>@Model.Card.Vintage</td></tr>
-                    <tr><td>Penny</td><td>@Model.Card.Penny</td></tr>
-                    <tr><td>Commander</td><td>@Model.Card.Commander</td></tr>
-                    <tr><td>Brawl</td><td>@Model.Card.Brawl</td></tr>
-                    <tr><td>Alchemy</td><td>@Model.Card.Alchemy</td></tr>
-                    <tr><td>Oathbreaker</td><td>@Model.Card.Oathbreaker</td></tr>
-                    <tr><td>Timeless</td><td>@Model.Card.Timeless</td></tr>
-                </tbody>
-            </table>
-
+        <div class="detail-topbar">
             @if (Model.LastSearch != null)
             {
                 <a asp-page="/CardOverview"
@@ -62,14 +34,103 @@
                    asp-route-color="@Model.LastSearch.Color"
                    asp-route-manaValue="@Model.LastSearch.ManaValue"
                    asp-route-format="@Model.LastSearch.Format"
-                   class="btn btn-secondary">
-                    Terug naar resultaten
+                   class="back-link-top">
+                    ← Terug naar resultaten
                 </a>
             }
             else
             {
-                <a asp-page="/Index" class="btn btn-secondary">Terug</a>
+                <a asp-page="/Index" class="back-link-top">
+                    ← Terug
+                </a>
             }
         </div>
-    }
-}
+
+        <div class="detail-header">
+            <h1>Kaartdetails</h1>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="custom-alert custom-alert-danger">@Model.ErrorMessage</div>
+        }
+        else if (Model.Card == null)
+        {
+            <div class="empty-state">
+                <p>Geen kaartgegevens beschikbaar.</p>
+            </div>
+        }
+        else
+        {
+            <div class="card-detail-layout">
+                <div class="card-image-panel">
+                    @if (!string.IsNullOrEmpty(Model.Card.ImageUrl))
+                    {
+                        <img src="@Model.Card.ImageUrl" alt="@Model.Card.Name" class="card-detail-image" />
+                    }
+                    else
+                    {
+                        <div class="card-detail-image no-detail-image">
+                            <span>Geen afbeelding beschikbaar</span>
+                        </div>
+                    }
+                </div>
+
+                <div class="card-info-panel">
+                    <div class="detail-card-header-box">
+                        <h2 class="detail-card-name">@Model.Card.Name</h2>
+                        <p class="detail-card-type">@Model.Card.TypeLine</p>
+                    </div>
+
+                    <div class="detail-info-box">
+                        <h3>Basisinformatie</h3>
+                        <div class="detail-info-grid">
+                            <div class="detail-info-item">
+                                <span class="detail-label">Mana Cost</span>
+                                <span class="detail-value">@Model.Card.ManaCost</span>
+                            </div>
+                            <div class="detail-info-item">
+                                <span class="detail-label">Type</span>
+                                <span class="detail-value">@Model.Card.TypeLine</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="detail-info-box">
+                        <h3>Oracle Text</h3>
+                        <p class="oracle-text">
+                            @if (string.IsNullOrWhiteSpace(Model.Card.OracleText))
+                            {
+                                <span>Geen oracle text beschikbaar.</span>
+                            }
+                            else
+                            {
+                                @Model.Card.OracleText
+                            }
+                        </p>
+                    </div>
+
+                    <div class="detail-info-box">
+                        <h3>Legalities</h3>
+                        <div class="legalities-grid">
+                            <div class="legality-row"><span>Standard</span><span class="legality-badge @GetLegalityClass(Model.Card.Standard)">@Model.Card.Standard</span></div>
+                            <div class="legality-row"><span>Historic</span><span class="legality-badge @GetLegalityClass(Model.Card.Historic)">@Model.Card.Historic</span></div>
+                            <div class="legality-row"><span>Gladiator</span><span class="legality-badge @GetLegalityClass(Model.Card.Gladiator)">@Model.Card.Gladiator</span></div>
+                            <div class="legality-row"><span>Pioneer</span><span class="legality-badge @GetLegalityClass(Model.Card.Pioneer)">@Model.Card.Pioneer</span></div>
+                            <div class="legality-row"><span>Modern</span><span class="legality-badge @GetLegalityClass(Model.Card.Modern)">@Model.Card.Modern</span></div>
+                            <div class="legality-row"><span>Legacy</span><span class="legality-badge @GetLegalityClass(Model.Card.Legacy)">@Model.Card.Legacy</span></div>
+                            <div class="legality-row"><span>Pauper</span><span class="legality-badge @GetLegalityClass(Model.Card.Pauper)">@Model.Card.Pauper</span></div>
+                            <div class="legality-row"><span>Vintage</span><span class="legality-badge @GetLegalityClass(Model.Card.Vintage)">@Model.Card.Vintage</span></div>
+                            <div class="legality-row"><span>Penny</span><span class="legality-badge @GetLegalityClass(Model.Card.Penny)">@Model.Card.Penny</span></div>
+                            <div class="legality-row"><span>Commander</span><span class="legality-badge @GetLegalityClass(Model.Card.Commander)">@Model.Card.Commander</span></div>
+                            <div class="legality-row"><span>Brawl</span><span class="legality-badge @GetLegalityClass(Model.Card.Brawl)">@Model.Card.Brawl</span></div>
+                            <div class="legality-row"><span>Alchemy</span><span class="legality-badge @GetLegalityClass(Model.Card.Alchemy)">@Model.Card.Alchemy</span></div>
+                            <div class="legality-row"><span>Oathbreaker</span><span class="legality-badge @GetLegalityClass(Model.Card.Oathbreaker)">@Model.Card.Oathbreaker</span></div>
+                            <div class="legality-row"><span>Timeless</span><span class="legality-badge @GetLegalityClass(Model.Card.Timeless)">@Model.Card.Timeless</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>

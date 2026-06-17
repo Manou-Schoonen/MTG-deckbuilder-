@@ -20,6 +20,8 @@ namespace WebAppMTGDAL.Database.Repos
         {
             var result = new List<DeckRecord>();
 
+            // exeption toevoegen waneer de database niet bereikbaar is
+
             await using var connection = new MySqlConnection(_connectionString);
             await connection.OpenAsync();
 
@@ -30,7 +32,7 @@ namespace WebAppMTGDAL.Database.Repos
             WHERE i.user_id = @userId
               AND i.item_type = 'deck'
             ORDER BY i.name;
-        ";
+            ";
 
             await using var cmd = new MySqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@userId", userId);
@@ -62,7 +64,7 @@ namespace WebAppMTGDAL.Database.Repos
             INNER JOIN decks d ON d.item_id = i.id
             WHERE i.id = @itemId
               AND i.item_type = 'deck';
-        ";
+            ";
 
             await using var cmd = new MySqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@itemId", itemId);
@@ -96,7 +98,7 @@ namespace WebAppMTGDAL.Database.Repos
             FROM item_card_references
             WHERE item_id = @itemId
             ORDER BY boardpart, id;
-        ";
+            ";
 
             await using var cmd = new MySqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@itemId", itemId);
@@ -132,7 +134,7 @@ namespace WebAppMTGDAL.Database.Repos
                 INSERT INTO items (user_id, name, item_type)
                 VALUES (@userId, @name, 'deck');
                 SELECT LAST_INSERT_ID();
-            ";
+                ";
 
                 await using (var itemCmd = new MySqlCommand(itemSql, connection, (MySqlTransaction)transaction))
                 {
@@ -146,7 +148,7 @@ namespace WebAppMTGDAL.Database.Repos
                 const string deckSql = @"
                 INSERT INTO decks (item_id, format, description)
                 VALUES (@itemId, @format, @description);
-            ";
+                ";
 
                 await using (var deckCmd = new MySqlCommand(deckSql, connection, (MySqlTransaction)transaction))
                 {
@@ -176,7 +178,7 @@ namespace WebAppMTGDAL.Database.Repos
             INSERT INTO item_card_references (item_id, card_id, quantity, boardpart)
             VALUES (@itemId, @cardId, @quantity, @boardpart);
             SELECT LAST_INSERT_ID();
-        ";
+            ";
 
             await using var cmd = new MySqlCommand(sql, connection);
             cmd.Parameters.AddWithValue("@itemId", itemId);
@@ -188,7 +190,7 @@ namespace WebAppMTGDAL.Database.Repos
             return Convert.ToInt32(result);
         }
 
-        public async Task RemoveCardFromDeckAsync(int itemId, string cardId)
+        public async Task RemoveCardFromDeckAsync(int itemId, string cardEntryId)
         {
             await using var connection = new MySqlConnection(_connectionString);
             await connection.OpenAsync();
@@ -196,10 +198,10 @@ namespace WebAppMTGDAL.Database.Repos
             const string sql = @"
         DELETE FROM item_card_references
         WHERE card_id = @cardId AND item_id = @itemId;
-    ";
+        ";
 
             await using var cmd = new MySqlCommand(sql, connection);
-            cmd.Parameters.AddWithValue("@cardId", cardId);
+            cmd.Parameters.AddWithValue("@cardId", cardEntryId);
             cmd.Parameters.AddWithValue("@itemId", itemId);
 
             await cmd.ExecuteNonQueryAsync();

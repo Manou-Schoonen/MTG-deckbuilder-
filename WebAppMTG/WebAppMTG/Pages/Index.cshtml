@@ -4,11 +4,58 @@
     ViewData["Title"] = "Home page";
 }
 
-<h2>Zoek kaarten</h2>
+<section class="hero-section">
+    <div class="hero-content">
+        <h1 class="hero-title">Zoek jouw Magic kaarten</h1>
+        <p class="hero-subtitle">
+            Ontdek kaarten, bouw decks en ga dieper in op je volgende strategie.
+        </p>
 
-<form method="get">
-    <div class="mb-3">
-        <input asp-for="SearchText" class="form-control" placeholder="Zoek een kaart..." />
+        <form method="get" class="search-form">
+            <input asp-for="SearchText" class="search-input" placeholder="Zoek een kaart..." />
+            <button type="submit" class="search-button">Zoeken</button>
+        </form>
+
+        <div class="advanced-search-wrapper">
+            <a asp-page="/AdvancedSearch" class="advanced-search-button">Advanced Search</a>
+        </div>
     </div>
-    <button type="submit" class="btn btn-primary">Zoeken</button>
-</form>
+
+    <a href="#info-section" class="scroll-indicator" aria-label="Scroll naar beneden">
+        <div class="arrow-down"></div>
+    </a>
+</section>
+
+<section id="info-section" class="info-section">
+    <div class="info-content">
+        <h2>Welkom bij WebAppMTG</h2>
+        <p>
+            Gebruik de zoekfunctie om snel kaarten te vinden en bekijk eenvoudig welke kaarten
+            passen binnen jouw deckstrategie. Dankzij de overzichtelijke zoekopties kun je sneller
+            bouwen, testen en verbeteren.
+        </p>
+        <p>
+            Via Advanced Search kun je nog gerichter zoeken op eigenschappen, type en andere details.
+            Zo krijg je sneller precies de kaarten te zien die je nodig hebt.
+        </p>
+    </div>
+</section>
+
+@section Scripts {
+    <script>
+        let isScrolling = false;
+
+        window.addEventListener('wheel', function (e) {
+            const infoSection = document.getElementById('info-section');
+
+            if (!isScrolling && window.scrollY < 80 && e.deltaY > 0) {
+                isScrolling = true;
+                infoSection.scrollIntoView({ behavior: 'smooth' });
+
+                setTimeout(() => {
+                    isScrolling = false;
+                }, 1000);
+            }
+        }, { passive: true });
+    </script>
+}

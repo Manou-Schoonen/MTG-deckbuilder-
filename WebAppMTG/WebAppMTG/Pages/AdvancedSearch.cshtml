@@ -1,56 +1,69 @@
 ﻿@page
 @model WebAppMTG.Pages.AdvancedSearchModel
 @{
-    <h1>Advanced Search</h1>
-
-    <form method="post">
-        <div>
-            <label asp-for="Search.Name">Name</label>
-            <input asp-for="Search.Name" />
-        </div>
-
-        <div>
-            <label asp-for="Search.Color">Color</label>
-            <select asp-for="Search.Color">
-                <option value="">-- Select color --</option>
-                <option value="W">White</option>
-                <option value="U">Blue</option>
-                <option value="B">Black</option>
-                <option value="R">Red</option>
-                <option value="G">Green</option>
-            </select>
-        </div>
-
-        <div>
-            <label asp-for="Search.TypeLine">Type</label>
-            <input asp-for="Search.TypeLine" />
-        </div>
-
-        <div>
-            <label asp-for="Search.ManaValue">Mana Value</label>
-            <input asp-for="Search.ManaValue" type="number" />
-        </div>
-        <div>
-            <label asp-for="Search.Format">Format</label>
-            <select asp-for="Search.Format">
-                <option value="">-- Select format --</option>
-                <option value="Standard">Standard</option>
-                <option value="Pioneer">Pioneer</option>
-                <option value="Modern">Modern</option>
-                <option value="Legacy">Legacy</option>
-                <option value="Vintage">Vintage</option>
-                <option value="Commander">Commander</option>
-                <option value="Oathbreaker">Oathbreaker</option>
-                <option value="Alchemy">Alchemy</option>
-                <option value="Historic">Historic</option>
-                <option value="Brawl">Brawl</option>
-                <option value="Timeless">Timeless</option>
-                <option value="Pioneer">Pioneer</option>
-                <option value="Pauper">Pauper</option>
-                <option value="Penny">Penny</option>
-            </select>
-        </div>
-
-        <button type="submit">Search</button>
-    </form>
+    ViewData["Title"] = "Advanced Search";
 }
+
+<section class="advanced-search-page">
+    <div class="advanced-search-container">
+        <div class="advanced-search-header">
+            <h1>Advanced Search</h1>
+            <p>Zoek gericht op naam, kleur, type, mana value en format.</p>
+        </div>
+
+        <form method="post" class="advanced-search-form">
+            <div class="search-grid">
+                <div class="form-group-custom">
+                    <label asp-for="Search.Name">Name</label>
+                    <input asp-for="Search.Name" class="custom-input" />
+                </div>
+
+                <div class="form-group-custom">
+                    <label asp-for="Search.Color">Color</label>
+                    <select asp-for="Search.Color" class="custom-input">
+                        <option value="">-- Select color --</option>
+                        <option value="W">White</option>
+                        <option value="U">Blue</option>
+                        <option value="B">Black</option>
+                        <option value="R">Red</option>
+                        <option value="G">Green</option>
+                    </select>
+                </div>
+
+                <div class="form-group-custom">
+                    <label asp-for="Search.TypeLine">Type</label>
+                    <input asp-for="Search.TypeLine" class="custom-input" />
+                </div>
+
+                <div class="form-group-custom">
+                    <label asp-for="Search.ManaValue">Mana Value</label>
+                    <input asp-for="Search.ManaValue" type="number" class="custom-input" />
+                </div>
+
+                <div class="form-group-custom full-width">
+                    <label asp-for="Search.Format">Format</label>
+                    <select asp-for="Search.Format" class="custom-input">
+                        <option value="">-- Select format --</option>
+                        <option value="Standard">Standard</option>
+                        <option value="Pioneer">Pioneer</option>
+                        <option value="Modern">Modern</option>
+                        <option value="Legacy">Legacy</option>
+                        <option value="Vintage">Vintage</option>
+                        <option value="Commander">Commander</option>
+                        <option value="Oathbreaker">Oathbreaker</option>
+                        <option value="Alchemy">Alchemy</option>
+                        <option value="Historic">Historic</option>
+                        <option value="Brawl">Brawl</option>
+                        <option value="Timeless">Timeless</option>
+                        <option value="Pauper">Pauper</option>
+                        <option value="Penny">Penny</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="advanced-search-actions">
+                <button type="submit" class="primary-action-button">Search</button>
+            </div>
+        </form>
+    </div>
+</section>

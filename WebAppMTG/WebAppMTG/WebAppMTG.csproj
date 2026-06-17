@@ -15,8 +15,4 @@
     <ProjectReference Include="..\Logic\WebAppMTGLogic.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="WebAppMTGLogic\" />
-  </ItemGroup>
-
 </Project>

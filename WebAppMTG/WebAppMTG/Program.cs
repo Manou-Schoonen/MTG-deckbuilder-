@@ -36,7 +36,7 @@ namespace WebAppMTG
             builder.Services.AddScoped<IMySQLDeckRepo>(sp =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-                return new MySQLDeckRepo(connectionString!);
+                return new SqlServerDeckRepo(connectionString!);
             });
 
             var app = builder.Build();

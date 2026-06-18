@@ -145,6 +145,33 @@ namespace WebAppMTGLogic.Database.Services
             return deck;
         }
 
+        public async Task RenameDeckAsync(int userId, int itemId, string newName)
+        {
+            if (string.IsNullOrWhiteSpace(newName))
+                throw new ArgumentException("Deck naam is verplicht.");
+
+            var deckRecord = await _mysqlDeckRepo.GetDeckRecordByIdAsync(itemId);
+            if (deckRecord == null)
+                throw new InvalidOperationException("Deck niet gevonden.");
+
+            if (deckRecord.UserId != userId)
+                throw new UnauthorizedAccessException("Dit deck hoort niet bij deze gebruiker.");
+
+            await _mysqlDeckRepo.UpdateDeckNameAsync(itemId, newName);
+        }
+
+        public async Task DeleteDeckAsync(int userId, int itemId)
+        {
+            var deckRecord = await _mysqlDeckRepo.GetDeckRecordByIdAsync(itemId);
+            if (deckRecord == null)
+                throw new InvalidOperationException("Deck niet gevonden.");
+
+            if (deckRecord.UserId != userId)
+                throw new UnauthorizedAccessException("Dit deck hoort niet bij deze gebruiker.");
+
+            await _mysqlDeckRepo.DeleteDeckAsync(itemId);
+        }
+
         public async Task<DeckLegalityResult> ValidateDeckAsync(int itemId)
         {
             var deck = await GetDeckByIdAsync(itemId);

@@ -12,6 +12,7 @@ namespace WebAppMTGDAL.Database.Repos
         public Dictionary<int, List<DeckCardEntry>> DeckEntriesByItemId { get; set; } = new();
 
         public int CreateDeckResult { get; set; }
+        public int AddCardToDeckResult { get; set; }
 
         public bool AddCardToDeckWasCalled { get; private set; }
         public int AddCardToDeck_ItemId { get; private set; }
@@ -23,7 +24,12 @@ namespace WebAppMTGDAL.Database.Repos
         public int RemoveCardFromDeck_ItemId { get; private set; }
         public string RemoveCardFromDeck_CardEntryId { get; private set; } = string.Empty;
 
-        public int AddCardToDeckResult { get; set; }
+        public bool UpdateDeckNameWasCalled { get; private set; }
+        public int UpdateDeckName_ItemId { get; private set; }
+        public string UpdateDeckName_NewName { get; private set; } = string.Empty;
+
+        public bool DeleteDeckWasCalled { get; private set; }
+        public int DeleteDeck_ItemId { get; private set; }
 
         public Task<List<DeckRecord>> GetDecksByUserIdAsync(int userId)
         {
@@ -69,6 +75,40 @@ namespace WebAppMTGDAL.Database.Repos
             RemoveCardFromDeckWasCalled = true;
             RemoveCardFromDeck_ItemId = itemId;
             RemoveCardFromDeck_CardEntryId = cardEntryId;
+
+            return Task.CompletedTask;
+        }
+
+        public Task UpdateDeckNameAsync(int itemId, string newName)
+        {
+            UpdateDeckNameWasCalled = true;
+            UpdateDeckName_ItemId = itemId;
+            UpdateDeckName_NewName = newName;
+
+            var deck = DeckRecords.FirstOrDefault(d => d.ItemId == itemId);
+            if (deck != null)
+            {
+                deck.Name = newName;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteDeckAsync(int itemId)
+        {
+            DeleteDeckWasCalled = true;
+            DeleteDeck_ItemId = itemId;
+
+            var deck = DeckRecords.FirstOrDefault(d => d.ItemId == itemId);
+            if (deck != null)
+            {
+                DeckRecords.Remove(deck);
+            }
+
+            if (DeckEntriesByItemId.ContainsKey(itemId))
+            {
+                DeckEntriesByItemId.Remove(itemId);
+            }
 
             return Task.CompletedTask;
         }

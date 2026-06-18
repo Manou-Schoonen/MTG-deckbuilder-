@@ -20,6 +20,9 @@ namespace WebAppMTG.Pages
         public DeckLegalityResult? LegalityResult { get; set; }
         public string? ErrorMessage { get; set; }
 
+        [BindProperty]
+        public string NewDeckName { get; set; } = string.Empty;
+
         public async Task<IActionResult> OnGetAsync(int id)
         {
             try
@@ -58,6 +61,64 @@ namespace WebAppMTG.Pages
             catch (DatabaseUnavailableException)
             {
                 ErrorMessage = "De kaart kon niet worden verwijderd omdat de database momenteel offline is.";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
+
+            try
+            {
+                Deck = await _userDeckService.GetDeckByIdAsync(itemId);
+                LegalityResult = await _userDeckService.ValidateDeckAsync(itemId);
+            }
+            catch
+            {
+            }
+
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostRenameDeckAsync(int itemId)
+        {
+            try
+            {
+                int userId = 1; // tijdelijk hardcoded
+                await _userDeckService.RenameDeckAsync(userId, itemId, NewDeckName);
+                return RedirectToPage(new { id = itemId });
+            }
+            catch (DatabaseUnavailableException)
+            {
+                ErrorMessage = "De decknaam kon niet worden aangepast omdat de database momenteel offline is.";
+            }
+            catch (Exception ex)
+            {
+                ErrorMessage = ex.Message;
+            }
+
+            try
+            {
+                Deck = await _userDeckService.GetDeckByIdAsync(itemId);
+                LegalityResult = await _userDeckService.ValidateDeckAsync(itemId);
+            }
+            catch
+            {
+            }
+
+            return Page();
+        }
+
+        public async Task<IActionResult> OnPostDeleteDeckAsync(int itemId)
+        {
+            try
+            {
+                int userId = 1; // tijdelijk hardcoded
+                await _userDeckService.DeleteDeckAsync(userId, itemId);
+                return RedirectToPage("/DecksOverview");
+            }
+            catch (DatabaseUnavailableException)
+            {
+                ErrorMessage = "Het deck kon niet worden verwijderd omdat de database momenteel offline is.";
             }
             catch (Exception ex)
             {

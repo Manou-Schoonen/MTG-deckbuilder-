@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Text;
 using WebAppMTGLogic.Interfaces;
 using WebAppMTGModelsDL.Exceptions;
-//using System.Data.SqlClient;
 
 namespace WebAppMTGDAL.Database.Repos
 {
@@ -243,6 +242,91 @@ namespace WebAppMTGDAL.Database.Repos
                 cmd.Parameters.AddWithValue("@itemId", itemId);
 
                 await cmd.ExecuteNonQueryAsync();
+            }
+            catch (SqlException ex)
+            {
+                throw new DatabaseUnavailableException("De database is momenteel niet beschikbaar.", ex);
+            }
+        }
+
+        public async Task UpdateDeckNameAsync(int itemId, string newName)
+        {
+            try
+            {
+                await using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                const string sql = @"
+        UPDATE items
+        SET name = @name
+        WHERE id = @itemId
+          AND item_type = 'deck';
+    ";
+
+                await using var cmd = new SqlCommand(sql, connection);
+                cmd.Parameters.AddWithValue("@name", newName);
+                cmd.Parameters.AddWithValue("@itemId", itemId);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            catch (SqlException ex)
+            {
+                throw new DatabaseUnavailableException("De database is momenteel niet beschikbaar.", ex);
+            }
+        }
+
+        public async Task DeleteDeckAsync(int itemId)
+        {
+            try
+            {
+                await using var connection = new SqlConnection(_connectionString);
+                await connection.OpenAsync();
+
+                await using var transaction = (SqlTransaction)await connection.BeginTransactionAsync();
+
+                try
+                {
+                    const string deleteCardsSql = @"
+            DELETE FROM item_card_references
+            WHERE item_id = @itemId;
+        ";
+
+                    await using (var deleteCardsCmd = new SqlCommand(deleteCardsSql, connection, transaction))
+                    {
+                        deleteCardsCmd.Parameters.AddWithValue("@itemId", itemId);
+                        await deleteCardsCmd.ExecuteNonQueryAsync();
+                    }
+
+                    const string deleteDeckSql = @"
+            DELETE FROM decks
+            WHERE item_id = @itemId;
+        ";
+
+                    await using (var deleteDeckCmd = new SqlCommand(deleteDeckSql, connection, transaction))
+                    {
+                        deleteDeckCmd.Parameters.AddWithValue("@itemId", itemId);
+                        await deleteDeckCmd.ExecuteNonQueryAsync();
+                    }
+
+                    const string deleteItemSql = @"
+            DELETE FROM items
+            WHERE id = @itemId
+              AND item_type = 'deck';
+        ";
+
+                    await using (var deleteItemCmd = new SqlCommand(deleteItemSql, connection, transaction))
+                    {
+                        deleteItemCmd.Parameters.AddWithValue("@itemId", itemId);
+                        await deleteItemCmd.ExecuteNonQueryAsync();
+                    }
+
+                    await transaction.CommitAsync();
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
+                }
             }
             catch (SqlException ex)
             {

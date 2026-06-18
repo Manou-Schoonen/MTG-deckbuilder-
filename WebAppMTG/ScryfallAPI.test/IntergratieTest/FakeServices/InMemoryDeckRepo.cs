@@ -68,5 +68,33 @@ namespace UnitTests.test.IntergratieTest.FakeServices
 
             return Task.CompletedTask;
         }
+
+        public Task UpdateDeckNameAsync(int itemId, string newName)
+        {
+            var deck = Decks.FirstOrDefault(d => d.ItemId == itemId);
+            if (deck != null)
+            {
+                deck.Name = newName;
+            }
+
+            return Task.CompletedTask;
+        }
+
+        public Task DeleteDeckAsync(int itemId)
+        {
+            var deck = Decks.FirstOrDefault(d => d.ItemId == itemId);
+            if (deck != null)
+            {
+                Decks.Remove(deck);
+            }
+
+            var entriesToRemove = Entries.Where(e => e.ItemId == itemId).ToList();
+            foreach (var entry in entriesToRemove)
+            {
+                Entries.Remove(entry);
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }

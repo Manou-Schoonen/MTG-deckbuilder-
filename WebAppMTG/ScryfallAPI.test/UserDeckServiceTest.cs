@@ -1,4 +1,5 @@
 ﻿using ModelsDL.Database.Models;
+using UnitTests.test.IntergratieTest.FakeServices;
 using WebAppMTGDAL.Database.Repos;
 using WebAppMTGLogic.API.Models;
 using WebAppMTGLogic.API.Services;
@@ -330,6 +331,53 @@ namespace ScryfallAPI.test
             var result = await _service.ValidateDeckAsync(1);
 
             Assert.True(result.IsLegal);
+        }
+
+        [Fact]
+        public async Task RenameDeckAsync_UpdatesDeckName()
+        {
+            var repo = new InMemoryDeckRepo();
+            repo.Decks.Add(new DeckRecord
+            {
+                ItemId = 1,
+                UserId = 1,
+                Name = "Old Name",
+                Format = "Standard",
+                Description = "Test"
+            });
+
+            await repo.UpdateDeckNameAsync(1, "New Name");
+
+            Assert.Equal("New Name", repo.Decks.First().Name);
+        }
+
+        [Fact]
+        public async Task DeleteDeckAsync_RemovesDeckAndEntries()
+        {
+            var repo = new InMemoryDeckRepo();
+
+            repo.Decks.Add(new DeckRecord
+            {
+                ItemId = 1,
+                UserId = 1,
+                Name = "Deck",
+                Format = "Standard",
+                Description = "Test"
+            });
+
+            repo.Entries.Add(new DeckCardEntry
+            {
+                Id = 1,
+                ItemId = 1,
+                CardId = "abc",
+                Quantity = 2,
+                BoardPart = BoardPart.Mainboard
+            });
+
+            await repo.DeleteDeckAsync(1);
+
+            Assert.Empty(repo.Decks);
+            Assert.Empty(repo.Entries);
         }
     }
 }

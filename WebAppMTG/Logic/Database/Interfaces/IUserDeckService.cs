@@ -15,6 +15,9 @@ namespace WebAppMTGLogic.Database.Interfaces
         Task RemoveCardFromDeckAsync(int userId, int itemId, string cardEntryId);
         Task<DeckModel> BuildDeckAsync(IEnumerable<DeckCardEntry> entries);
 
+        Task RenameDeckAsync(int userId, int itemId, string newName);
+        Task DeleteDeckAsync(int userId, int itemId);
+
         Task<DeckLegalityResult> ValidateDeckAsync(int itemId);
     }
 }

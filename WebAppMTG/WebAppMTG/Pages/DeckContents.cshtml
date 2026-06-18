@@ -4,15 +4,12 @@
 @{
     ViewData["Title"] = "Deck inhoud";
 }
-
 @functions {
     public string GetCardTypeGroup(string? typeLine)
     {
         if (string.IsNullOrWhiteSpace(typeLine))
             return "Overig";
-
         var lower = typeLine.ToLower();
-
         if (lower.Contains("creature")) return "Creatures";
         if (lower.Contains("instant")) return "Instants";
         if (lower.Contains("sorcery")) return "Sorceries";
@@ -21,14 +18,12 @@
         if (lower.Contains("planeswalker")) return "Planeswalkers";
         if (lower.Contains("land")) return "Lands";
         if (lower.Contains("battle")) return "Battles";
-
         return "Overig";
     }
 
     public int GetTypeOrder(string? typeLine)
     {
         var group = GetCardTypeGroup(typeLine);
-
         return group switch
         {
             "Creatures" => 1,
@@ -51,7 +46,6 @@
 
 <section class="deck-contents-page">
     <div class="deck-contents-container">
-
         <div class="detail-topbar">
             <a asp-page="/DecksOverview" class="back-link-top">
                 ← Terug naar decks
@@ -72,7 +66,47 @@
         {
             <div class="deck-hero">
                 <div class="deck-hero-main">
-                    <h1>@Model.Deck.Name</h1>
+                    <div class="deck-title-row">
+                        <form method="post" asp-page-handler="RenameDeck" id="renameDeckForm" class="deck-title-form">
+                            <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
+
+                            <button type="button"
+                                    class="icon-action-button danger-button"
+                                    title="Deck verwijderen"
+                                    onclick="confirmDeleteDeck()">
+                                🗑
+                            </button>
+
+                            <button type="button"
+                                    id="editDeckNameButton"
+                                    class="icon-action-button"
+                                    onclick="enableDeckNameEdit()"
+                                    title="Decknaam aanpassen">
+                                ✏️
+                            </button>
+
+                            <button type="submit"
+                                    id="confirmDeckNameButton"
+                                    class="icon-action-button confirm-button"
+                                    title="Bevestigen"
+                                    style="display:none;">
+                                ✔
+                            </button>
+
+                            <span id="deckNameText" class="deck-title-text">@Model.Deck.Name</span>
+
+                            <input type="text"
+                                   id="deckNameInput"
+                                   name="NewDeckName"
+                                   value="@Model.Deck.Name"
+                                   class="form-control custom-input deck-name-input-inline"
+                                   style="display:none;"
+                                   required />
+                        </form>
+
+                        
+                    </div>
+
                     <p>@(string.IsNullOrWhiteSpace(Model.Deck.Description) ? "Geen beschrijving opgegeven." : Model.Deck.Description)</p>
                 </div>
 
@@ -91,11 +125,6 @@
                     </div>
                 </div>
             </div>
-
-            @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
-            {
-                <div class="custom-alert custom-alert-danger">@Model.ErrorMessage</div>
-            }
 
             @if (Model.LegalityResult != null)
             {
@@ -123,7 +152,6 @@
                 <div class="deck-section-header">
                     <h2>Mainboard</h2>
                 </div>
-
                 @if (Model.Deck.Mainboard.Count == 0)
                 {
                     <div class="empty-state">
@@ -145,7 +173,6 @@
                                     <h3>@group.Key</h3>
                                     <span>@group.Sum(x => x.Quantity) kaarten</span>
                                 </div>
-
                                 <div class="deck-type-card-list">
                                     @foreach (var card in group)
                                     {
@@ -156,10 +183,8 @@
                                                     <h4>@card.Card.Name</h4>
                                                     <p class="deck-card-entry-type">@card.Card.TypeLine</p>
                                                 </div>
-
                                                 <div class="card-inline-controls">
                                                     <span class="deck-quantity-badge">x @card.Quantity</span>
-
                                                     <button type="button"
                                                             class="card-size-toggle-button"
                                                             onclick="toggleCardSize('@cardElementId', this)">
@@ -167,7 +192,6 @@
                                                     </button>
                                                 </div>
                                             </div>
-
                                             <div class="deck-card-entry-visual">
                                                 @if (!string.IsNullOrWhiteSpace(card.Card.ImageUrl))
                                                 {
@@ -180,7 +204,6 @@
                                                     </div>
                                                 }
                                             </div>
-
                                             <div class="deck-card-entry-footer">
                                                 <form method="post" asp-page-handler="RemoveCard">
                                                     <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
@@ -194,7 +217,6 @@
                             </div>
                         }
                     </div>
-                
                 }
             </div>
 
@@ -202,7 +224,6 @@
                 <div class="deck-section-header">
                     <h2>Sideboard</h2>
                 </div>
-
                 @if (Model.Deck.Sideboard.Count == 0)
                 {
                     <div class="empty-state">
@@ -224,21 +245,18 @@
                                     <h3>@group.Key</h3>
                                     <span>@group.Sum(x => x.Quantity) kaarten</span>
                                 </div>
-
                                 <div class="deck-type-card-list">
                                     @foreach (var card in group)
                                     {
-                                        var cardElementId = $"main-{ToSafeId(group.Key)}-{card.Card.Id}";
+                                        var cardElementId = $"side-{ToSafeId(group.Key)}-{card.Card.Id}";
                                         <div class="deck-card-entry-big compact-card" id="@cardElementId">
                                             <div class="deck-card-entry-top">
                                                 <div class="deck-card-entry-info">
                                                     <h4>@card.Card.Name</h4>
                                                     <p class="deck-card-entry-type">@card.Card.TypeLine</p>
                                                 </div>
-
                                                 <div class="card-inline-controls">
                                                     <span class="deck-quantity-badge">x @card.Quantity</span>
-
                                                     <button type="button"
                                                             class="card-size-toggle-button"
                                                             onclick="toggleCardSize('@cardElementId', this)">
@@ -246,7 +264,6 @@
                                                     </button>
                                                 </div>
                                             </div>
-
                                             <div class="deck-card-entry-visual">
                                                 @if (!string.IsNullOrWhiteSpace(card.Card.ImageUrl))
                                                 {
@@ -259,7 +276,6 @@
                                                     </div>
                                                 }
                                             </div>
-
                                             <div class="deck-card-entry-footer">
                                                 <form method="post" asp-page-handler="RemoveCard">
                                                     <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
@@ -273,7 +289,6 @@
                             </div>
                         }
                     </div>
-                
                 }
             </div>
         }
@@ -287,7 +302,6 @@
             if (!card) return;
 
             const isCompact = card.classList.contains("compact-card");
-
             card.classList.remove("compact-card", "large-card");
 
             if (isCompact) {
@@ -296,6 +310,28 @@
             } else {
                 card.classList.add("compact-card");
                 button.textContent = "Groot tonen";
+            }
+        }
+
+        function enableDeckNameEdit() {
+            const text = document.getElementById("deckNameText");
+            const input = document.getElementById("deckNameInput");
+            const editButton = document.getElementById("editDeckNameButton");
+            const confirmButton = document.getElementById("confirmDeckNameButton");
+
+            text.style.display = "none";
+            input.style.display = "inline-block";
+            editButton.style.display = "none";
+            confirmButton.style.display = "inline-block";
+
+            input.focus();
+            input.select();
+        }
+
+        function confirmDeleteDeck() {
+            const confirmed = confirm("Weet je zeker dat je dit deck wilt verwijderen? Deze actie kan niet ongedaan worden gemaakt.");
+            if (confirmed) {
+                document.getElementById("deleteDeckForm").submit();
             }
         }
     </script>

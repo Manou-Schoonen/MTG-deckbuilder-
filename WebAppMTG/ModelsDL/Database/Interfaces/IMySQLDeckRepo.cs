@@ -15,5 +15,7 @@ namespace WebAppMTGLogic.Interfaces
 
         Task<int> AddCardToDeckAsync(int itemId, string cardId, int quantity, BoardPart boardPart);
         Task RemoveCardFromDeckAsync(int itemId, string cardEntryId);
+        Task UpdateDeckNameAsync(int itemId, string newName);
+        Task DeleteDeckAsync(int itemId);
     }
 }

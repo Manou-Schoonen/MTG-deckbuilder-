@@ -6,6 +6,8 @@ using WebAppMTGLogic.API.Interfaces;
 using WebAppMTGLogic.API.Models;
 using WebAppMTGLogic.Database.Interfaces;
 using WebAppMTGLogic.Database.Models;
+using WebAppMTGModelsDL.Exceptions;
+using WebAppMTGModelsDL.Exeptions;
 
 namespace WebAppMTG.Pages
 {
@@ -13,6 +15,7 @@ namespace WebAppMTG.Pages
     {
         private readonly ICardLogicService _cardLogicService;
         private readonly IUserDeckService _userDeckService;
+
         public CardOverviewModel(ICardLogicService cardLogicService, IUserDeckService userDeckService)
         {
             _cardLogicService = cardLogicService;
@@ -37,9 +40,13 @@ namespace WebAppMTG.Pages
         [BindProperty(SupportsGet = true)]
         public string? Format { get; set; }
 
-        public string? ErrorMessage { get; set; }
-        public List<CardReturnModel> Cards { get; set; } = new();
+        public string? ApiErrorMessage { get; set; }
+        public string? DeckErrorMessage { get; set; }
 
+        public List<CardReturnModel> Cards { get; set; } = new();
+        public List<DeckModel> UserDecks { get; set; } = new();
+
+        public bool CanAddToDeck => string.IsNullOrWhiteSpace(DeckErrorMessage) && UserDecks.Any();
 
         [BindProperty]
         public int SelectedDeckId { get; set; }
@@ -52,12 +59,25 @@ namespace WebAppMTG.Pages
 
         [BindProperty]
         public BoardPart SelectedBoardPart { get; set; } = BoardPart.Mainboard;
-        public List<DeckModel> UserDecks { get; set; } = new();
 
         public async Task OnGetAsync()
         {
-            int userId = 1; // tijdelijk hardcoded
-            UserDecks = await _userDeckService.GetDecksByUserIdAsync(userId);
+            int userId = 1;
+
+            try
+            {
+                UserDecks = await _userDeckService.GetDecksByUserIdAsync(userId);
+            }
+            catch (DatabaseUnavailableException)
+            {
+                DeckErrorMessage = "Decks konden niet worden geladen omdat de database momenteel offline is.";
+                UserDecks = new List<DeckModel>();
+            }
+            catch (ExternalApiUnavailableException)
+            {
+                DeckErrorMessage = "Decks konden niet volledig worden geladen omdat kaartinformatie tijdelijk niet beschikbaar is.";
+                UserDecks = new List<DeckModel>();
+            }
 
             try
             {
@@ -67,7 +87,7 @@ namespace WebAppMTG.Pages
                     !string.IsNullOrWhiteSpace(TypeLine) ||
                     !string.IsNullOrWhiteSpace(ManaValue) ||
                     !string.IsNullOrWhiteSpace(Format);
-                
+
                 if (hasAdvancedSearch)
                 {
                     Cards = await _cardLogicService.AdvancedSearchAsync(
@@ -77,38 +97,27 @@ namespace WebAppMTG.Pages
                             Color = Color,
                             TypeLine = TypeLine,
                             ManaValue = ManaValue,
-                            Format = Format,
+                            Format = Format
                         });
                 }
                 else if (!string.IsNullOrWhiteSpace(Query))
                 {
                     Cards = await _cardLogicService.SearchCardsAsync(Query);
                 }
-                
-                HttpContext.Session.SetObject("LastSearchResults", Cards);
-
-                HttpContext.Session.SetObject("LastSearchParameters", new PreviousSearch
-                {
-                    Query = Query,
-                    Name = Name,
-                    TypeLine = TypeLine,
-                    Color = Color,
-                    ManaValue = ManaValue,
-                    Format = Format
-                });
             }
-            catch (Exception ex)
+            catch (ExternalApiUnavailableException)
             {
-                ErrorMessage = ex.Message;
+                ApiErrorMessage = "Kaarten konden niet worden geladen omdat de externe API momenteel niet reageert.";
+                Cards = new List<CardReturnModel>();
             }
         }
 
         public async Task<IActionResult> OnPostAddToDeckAsync()
         {
+            int userId = 1;
+
             try
             {
-                int userId = 1; // tijdelijk hardcoded
-
                 await _userDeckService.AddCardToDeckAsync(
                     userId,
                     SelectedDeckId,
@@ -126,13 +135,21 @@ namespace WebAppMTG.Pages
                     Format
                 });
             }
+            catch (DatabaseUnavailableException)
+            {
+                DeckErrorMessage = "De kaart kon niet worden toegevoegd omdat de database momenteel offline is.";
+            }
+            catch (ExternalApiUnavailableException)
+            {
+                DeckErrorMessage = "De kaart kon niet worden toegevoegd omdat kaartinformatie tijdelijk niet beschikbaar is.";
+            }
             catch (Exception ex)
             {
-                ErrorMessage = ex.Message;
-
-                await OnGetAsync();
-                return Page();
+                DeckErrorMessage = ex.Message;
             }
+
+            await OnGetAsync();
+            return Page();
         }
     }
 }

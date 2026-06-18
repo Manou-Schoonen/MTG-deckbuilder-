@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebAppMTGLogic.Database.Interfaces;
 using WebAppMTGLogic.Database.Models;
+using WebAppMTGModelsDL.Exceptions;
+using WebAppMTGModelsDL.Exeptions;
 
 namespace WebAppMTG.Pages
 {
@@ -20,33 +22,58 @@ namespace WebAppMTG.Pages
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
-            Deck = await _userDeckService.GetDeckByIdAsync(id);
-
-            if (Deck == null)
+            try
             {
-                return NotFound();
+                Deck = await _userDeckService.GetDeckByIdAsync(id);
+
+                if (Deck == null)
+                {
+                    ErrorMessage = "Deck niet gevonden.";
+                    return Page();
+                }
+
+                LegalityResult = await _userDeckService.ValidateDeckAsync(id);
+                return Page();
             }
-
-            LegalityResult = await _userDeckService.ValidateDeckAsync(id);
-
-            return Page();
+            catch (DatabaseUnavailableException)
+            {
+                ErrorMessage = "Het deck kon niet worden geladen omdat de database momenteel offline is.";
+                return Page();
+            }
+            catch (ExternalApiUnavailableException)
+            {
+                ErrorMessage = "Het deck kon niet volledig worden geladen omdat de kaarten-API momenteel niet reageert.";
+                return Page();
+            }
         }
 
         public async Task<IActionResult> OnPostRemoveCardAsync(int itemId, string cardEntryId)
         {
             try
             {
-                int userId = 1; // tijdelijk hardcoded want ik ga misschien geen accounts toepassen
+                int userId = 1;
                 await _userDeckService.RemoveCardFromDeckAsync(userId, itemId, cardEntryId);
                 return RedirectToPage(new { id = itemId });
+            }
+            catch (DatabaseUnavailableException)
+            {
+                ErrorMessage = "De kaart kon niet worden verwijderd omdat de database momenteel offline is.";
             }
             catch (Exception ex)
             {
                 ErrorMessage = ex.Message;
+            }
+
+            try
+            {
                 Deck = await _userDeckService.GetDeckByIdAsync(itemId);
                 LegalityResult = await _userDeckService.ValidateDeckAsync(itemId);
-                return Page();
             }
+            catch
+            {
+            }
+
+            return Page();
         }
     }
 }

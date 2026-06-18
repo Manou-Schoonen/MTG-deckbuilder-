@@ -1,10 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Microsoft.Data.SqlClient;
 using ModelsDL.Database.Models;
 using MySqlConnector;
+using System;
+using System.Collections.Generic;
+using System.Text;
 using WebAppMTGLogic.Interfaces;
-using Microsoft.Data.SqlClient;
+using WebAppMTGModelsDL.Exceptions;
 //using System.Data.SqlClient;
 
 namespace WebAppMTGDAL.Database.Repos
@@ -56,7 +57,7 @@ namespace WebAppMTGDAL.Database.Repos
             }
             catch (SqlException ex)
             {
-                throw new Exception("De SQL Server database is niet bereikbaar of de query is mislukt.", ex);
+                throw new DatabaseUnavailableException("De database is momenteel niet beschikbaar.", ex);
             }
         }
 
@@ -96,7 +97,7 @@ namespace WebAppMTGDAL.Database.Repos
             }
             catch (SqlException ex)
             {
-                throw new Exception("De SQL Server database is niet bereikbaar of de query is mislukt.", ex);
+                throw new DatabaseUnavailableException("De database is momenteel niet beschikbaar.", ex);
             }
         }
 
@@ -136,7 +137,7 @@ namespace WebAppMTGDAL.Database.Repos
             }
             catch (SqlException ex)
             {
-                throw new Exception("De SQL Server database is niet bereikbaar of de query is mislukt.", ex);
+                throw new DatabaseUnavailableException("De database is momenteel niet beschikbaar.", ex);
             }
         }
 
@@ -193,7 +194,7 @@ namespace WebAppMTGDAL.Database.Repos
             }
             catch (SqlException ex)
             {
-                throw new Exception("De SQL Server database is niet bereikbaar of de query is mislukt.", ex);
+                throw new DatabaseUnavailableException("De database is momenteel niet beschikbaar.", ex);
             }
         }
 
@@ -221,7 +222,7 @@ namespace WebAppMTGDAL.Database.Repos
             }
             catch (SqlException ex)
             {
-                throw new Exception("De SQL Server database is niet bereikbaar of de query is mislukt.", ex);
+                throw new DatabaseUnavailableException("De database is momenteel niet beschikbaar.", ex);
             }
         }
 
@@ -245,7 +246,7 @@ namespace WebAppMTGDAL.Database.Repos
             }
             catch (SqlException ex)
             {
-                throw new Exception("De SQL Server database is niet bereikbaar of de query is mislukt.", ex);
+                throw new DatabaseUnavailableException("De database is momenteel niet beschikbaar.", ex);
             }
         }
 

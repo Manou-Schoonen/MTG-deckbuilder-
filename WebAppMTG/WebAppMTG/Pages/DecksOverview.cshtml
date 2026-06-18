@@ -17,7 +17,11 @@
             </a>
         </div>
 
-        @if (Model.Decks == null || Model.Decks.Count == 0)
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="custom-alert custom-alert-danger">@Model.ErrorMessage</div>
+        }
+        else if (Model.Decks == null || Model.Decks.Count == 0)
         {
             <div class="empty-state">
                 <p>Je hebt nog geen decks.</p>

@@ -6,13 +6,18 @@
 
 <section class="card-overview-page">
     <div class="card-overview-container">
-        
 
-        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        @if (!string.IsNullOrEmpty(Model.ApiErrorMessage))
         {
-            <div class="custom-alert custom-alert-danger">@Model.ErrorMessage</div>
+            <div class="custom-alert custom-alert-danger">@Model.ApiErrorMessage</div>
         }
-        else if (Model.Cards == null || Model.Cards.Count == 0)
+
+        @if (!string.IsNullOrEmpty(Model.DeckErrorMessage))
+        {
+            <div class="custom-alert custom-alert-warning">@Model.DeckErrorMessage</div>
+        }
+
+        @if (Model.Cards == null || Model.Cards.Count == 0)
         {
             <div class="empty-state">
                 <p>Geen kaarten gevonden.</p>
@@ -45,66 +50,72 @@
                             </div>
                         </a>
 
-                        <button type="button"
-                                class="add-button"
-                                data-bs-toggle="modal"
-                                data-bs-target="#@modalId">
-                            Voeg toe aan item
-                        </button>
+                        @if (Model.CanAddToDeck)
+                        {
+                            <button type="button"
+                                    class="add-button"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#@modalId">
+                                Voeg toe aan deck
+                            </button>
+                        }
                     </div>
 
-                    <div class="modal fade custom-modal" id="@modalId" tabindex="-1" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content custom-modal-content">
-                                <form method="post" asp-page-handler="AddToDeck">
-                                    <div class="modal-header custom-modal-header">
-                                        <h5 class="modal-title">Voeg @card.Name toe aan een deck</h5>
-                                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-                                    </div>
-
-                                    <div class="modal-body custom-modal-body">
-                                        <input type="hidden" name="SelectedCardId" value="@card.Id" />
-
-                                        <input type="hidden" name="Query" value="@Model.Query" />
-                                        <input type="hidden" name="Name" value="@Model.Name" />
-                                        <input type="hidden" name="TypeLine" value="@Model.TypeLine" />
-                                        <input type="hidden" name="Color" value="@Model.Color" />
-                                        <input type="hidden" name="ManaValue" value="@Model.ManaValue" />
-                                        <input type="hidden" name="Format" value="@Model.Format" />
-
-                                        <div class="mb-3">
-                                            <label class="form-label">Deck</label>
-                                            <select name="SelectedDeckId" class="form-select custom-input" required>
-                                                <option value="">-- Kies een deck --</option>
-                                                @foreach (var deck in Model.UserDecks)
-                                                {
-                                                    <option value="@deck.ItemId">@deck.Name (@deck.Format)</option>
-                                                }
-                                            </select>
+                    @if (Model.CanAddToDeck)
+                    {
+                        <div class="modal fade custom-modal" id="@modalId" tabindex="-1" aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content custom-modal-content">
+                                    <form method="post" asp-page-handler="AddToDeck">
+                                        <div class="modal-header custom-modal-header">
+                                            <h5 class="modal-title">Voeg @card.Name toe aan een deck</h5>
+                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Aantal</label>
-                                            <input type="number" name="QuantityToAdd" value="1" min="1" class="form-control custom-input" />
+                                        <div class="modal-body custom-modal-body">
+                                            <input type="hidden" name="SelectedCardId" value="@card.Id" />
+
+                                            <input type="hidden" name="Query" value="@Model.Query" />
+                                            <input type="hidden" name="Name" value="@Model.Name" />
+                                            <input type="hidden" name="TypeLine" value="@Model.TypeLine" />
+                                            <input type="hidden" name="Color" value="@Model.Color" />
+                                            <input type="hidden" name="ManaValue" value="@Model.ManaValue" />
+                                            <input type="hidden" name="Format" value="@Model.Format" />
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Deck</label>
+                                                <select name="SelectedDeckId" class="form-select custom-input" required>
+                                                    <option value="">-- Kies een deck --</option>
+                                                    @foreach (var deck in Model.UserDecks)
+                                                    {
+                                                        <option value="@deck.ItemId">@deck.Name (@deck.Format)</option>
+                                                    }
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Aantal</label>
+                                                <input type="number" name="QuantityToAdd" value="1" min="1" class="form-control custom-input" />
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Board part</label>
+                                                <select name="SelectedBoardPart" class="form-select custom-input">
+                                                    <option value="Mainboard">Mainboard</option>
+                                                    <option value="Sideboard">Sideboard</option>
+                                                </select>
+                                            </div>
                                         </div>
 
-                                        <div class="mb-3">
-                                            <label class="form-label">Board part</label>
-                                            <select name="SelectedBoardPart" class="form-select custom-input">
-                                                <option value="Mainboard">Mainboard</option>
-                                                <option value="Sideboard">Sideboard</option>
-                                            </select>
+                                        <div class="modal-footer custom-modal-footer">
+                                            <button type="button" class="secondary-action-button" data-bs-dismiss="modal">Annuleren</button>
+                                            <button type="submit" class="primary-action-button">Toevoegen</button>
                                         </div>
-                                    </div>
-
-                                    <div class="modal-footer custom-modal-footer">
-                                        <button type="button" class="secondary-action-button" data-bs-dismiss="modal">Annuleren</button>
-                                        <button type="submit" class="primary-action-button">Toevoegen</button>
-                                    </div>
-                                </form>
+                                    </form>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    }
                 }
             </div>
         }

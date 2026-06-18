@@ -58,7 +58,11 @@
             </a>
         </div>
 
-        @if (Model.Deck == null)
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorMessage))
+        {
+            <div class="custom-alert custom-alert-danger">@Model.ErrorMessage</div>
+        }
+        else if (Model.Deck == null)
         {
             <div class="empty-state">
                 <p>Deck niet gevonden.</p>

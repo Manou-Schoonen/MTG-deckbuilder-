@@ -13,7 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ModelsDL\WebAppMTGModelsDAL-Logic.csproj" />
+    <ProjectReference Include="..\ModelsDL\WebAppMTGModelsDL.csproj" />
   </ItemGroup>
 
 </Project>

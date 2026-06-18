@@ -27,6 +27,7 @@ namespace WebAppMTG
                 client.BaseAddress = new Uri("https://api.scryfall.com/");
                 client.DefaultRequestHeaders.Add("User-Agent", "WebAppMTG/1.0");
                 client.DefaultRequestHeaders.Add("Accept", "application/json;q=0.9,*/*;q=0.8");
+                client.Timeout = TimeSpan.FromSeconds(10);
             });
 
             builder.Services.AddScoped<ICardLogicService, CardLogicService>();

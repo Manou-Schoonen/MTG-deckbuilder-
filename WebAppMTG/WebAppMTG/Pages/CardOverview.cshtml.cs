@@ -70,6 +70,17 @@ namespace WebAppMTG.Pages
         {
             await LoadUserDecksAsync();
             await LoadCardsAsync();
+
+            HttpContext.Session.SetObject("LastSearchResults", Cards);
+            HttpContext.Session.SetObject("LastSearchParameters", new PreviousSearch
+            {
+                Query = Query,
+                Name = Name,
+                TypeLine = TypeLine,
+                Color = Color,
+                ManaValue = ManaValue,
+                Format = Format
+            });
         }
 
         public async Task<IActionResult> OnPostAddToDeckAsync()

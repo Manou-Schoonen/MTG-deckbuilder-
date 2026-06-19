@@ -5,7 +5,7 @@ using System.Text;
 
 namespace WebAppMTGLogic.Interfaces
 {
-    public interface IMySQLDeckRepo
+    public interface IDeckRepo
     {
         Task<List<DeckRecord>> GetDecksByUserIdAsync(int userId);
         Task<DeckRecord?> GetDeckRecordByIdAsync(int itemId);

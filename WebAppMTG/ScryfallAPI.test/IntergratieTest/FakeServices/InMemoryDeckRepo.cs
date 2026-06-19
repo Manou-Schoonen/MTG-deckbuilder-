@@ -6,7 +6,7 @@ using WebAppMTGLogic.Interfaces;
 
 namespace UnitTests.test.IntergratieTest.FakeServices
 {
-    public class InMemoryDeckRepo : IMySQLDeckRepo
+    public class InMemoryDeckRepo : IDeckRepo
     {
         public List<DeckRecord> Decks { get; } = new();
         public List<DeckCardEntry> Entries { get; } = new();

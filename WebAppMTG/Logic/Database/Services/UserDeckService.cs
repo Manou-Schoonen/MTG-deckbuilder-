@@ -13,12 +13,12 @@ namespace WebAppMTGLogic.Database.Services
 {
     public class UserDeckService : IUserDeckService
     {
-        private readonly IMySQLDeckRepo _mysqlDeckRepo;
+        private readonly IDeckRepo _mysqlDeckRepo;
         private readonly ICardLogicService _cardLogicService;
         private readonly ILegalityRule _legalityRule;
 
         public UserDeckService(
-            IMySQLDeckRepo mysqlDeckRepo,
+            IDeckRepo mysqlDeckRepo,
             ICardLogicService cardLogicService,
             ILegalityRule legalityRule)
         {
@@ -129,7 +129,7 @@ namespace WebAppMTGLogic.Database.Services
                     DeckCardEntryId = cardEntry.Id,
                     Card = card,
                     Quantity = cardEntry.Quantity,
-                    BoardPart = (BoardPart)cardEntry.BoardPart // !!!!!  ModelsDL.Database.Models.
+                    BoardPart = (BoardPart)cardEntry.BoardPart 
                 };
 
                 if (cardEntry.BoardPart == BoardPart.Mainboard)

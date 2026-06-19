@@ -6,7 +6,7 @@ using WebAppMTGLogic.Interfaces;
 
 namespace WebAppMTGDAL.Database.Repos
 {
-    public class FakeMySQLDeckRepo : IMySQLDeckRepo
+    public class FakeMySQLDeckRepo : IDeckRepo
     {
         public List<DeckRecord> DeckRecords { get; set; } = new();
         public Dictionary<int, List<DeckCardEntry>> DeckEntriesByItemId { get; set; } = new();

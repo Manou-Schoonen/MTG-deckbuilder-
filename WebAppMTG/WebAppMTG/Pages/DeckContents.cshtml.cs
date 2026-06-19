@@ -4,9 +4,12 @@ using WebAppMTGLogic.Database.Interfaces;
 using WebAppMTGLogic.Database.Models;
 using WebAppMTGModelsDL.Exceptions;
 using WebAppMTGModelsDL.Exeptions;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAppMTG.Pages
 {
+    [Authorize]
     public class DeckContentsModel : PageModel
     {
         private readonly IUserDeckService _userDeckService;
@@ -25,6 +28,12 @@ namespace WebAppMTG.Pages
 
         public async Task<IActionResult> OnGetAsync(int id)
         {
+            var userId = GetCurrentUserId();
+            if (!userId.HasValue)
+            {
+                return RedirectToPage("/Login");
+            }
+
             try
             {
                 Deck = await _userDeckService.GetDeckByIdAsync(id);
@@ -52,10 +61,15 @@ namespace WebAppMTG.Pages
 
         public async Task<IActionResult> OnPostRemoveCardAsync(int itemId, string cardEntryId)
         {
+            var userId = GetCurrentUserId();
+            if (!userId.HasValue)
+            {
+                return RedirectToPage("/Login");
+            }
+
             try
             {
-                int userId = 1;
-                await _userDeckService.RemoveCardFromDeckAsync(userId, itemId, cardEntryId);
+                await _userDeckService.RemoveCardFromDeckAsync(userId.Value, itemId, cardEntryId);
                 return RedirectToPage(new { id = itemId });
             }
             catch (DatabaseUnavailableException)
@@ -67,24 +81,21 @@ namespace WebAppMTG.Pages
                 ErrorMessage = ex.Message;
             }
 
-            try
-            {
-                Deck = await _userDeckService.GetDeckByIdAsync(itemId);
-                LegalityResult = await _userDeckService.ValidateDeckAsync(itemId);
-            }
-            catch
-            {
-            }
-
+            await ReloadDeckDataAsync(itemId);
             return Page();
         }
 
         public async Task<IActionResult> OnPostRenameDeckAsync(int itemId)
         {
+            var userId = GetCurrentUserId();
+            if (!userId.HasValue)
+            {
+                return RedirectToPage("/Login");
+            }
+
             try
             {
-                int userId = 1; // tijdelijk hardcoded
-                await _userDeckService.RenameDeckAsync(userId, itemId, NewDeckName);
+                await _userDeckService.RenameDeckAsync(userId.Value, itemId, NewDeckName);
                 return RedirectToPage(new { id = itemId });
             }
             catch (DatabaseUnavailableException)
@@ -96,24 +107,21 @@ namespace WebAppMTG.Pages
                 ErrorMessage = ex.Message;
             }
 
-            try
-            {
-                Deck = await _userDeckService.GetDeckByIdAsync(itemId);
-                LegalityResult = await _userDeckService.ValidateDeckAsync(itemId);
-            }
-            catch
-            {
-            }
-
+            await ReloadDeckDataAsync(itemId);
             return Page();
         }
 
         public async Task<IActionResult> OnPostDeleteDeckAsync(int itemId)
         {
+            var userId = GetCurrentUserId();
+            if (!userId.HasValue)
+            {
+                return RedirectToPage("/Login");
+            }
+
             try
             {
-                int userId = 1; // tijdelijk hardcoded
-                await _userDeckService.DeleteDeckAsync(userId, itemId);
+                await _userDeckService.DeleteDeckAsync(userId.Value, itemId);
                 return RedirectToPage("/DecksOverview");
             }
             catch (DatabaseUnavailableException)
@@ -125,16 +133,32 @@ namespace WebAppMTG.Pages
                 ErrorMessage = ex.Message;
             }
 
+            await ReloadDeckDataAsync(itemId);
+            return Page();
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var userIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (int.TryParse(userIdValue, out var userId))
+            {
+                return userId;
+            }
+
+            return null;
+        }
+
+        private async Task ReloadDeckDataAsync(int deckId)
+        {
             try
             {
-                Deck = await _userDeckService.GetDeckByIdAsync(itemId);
-                LegalityResult = await _userDeckService.ValidateDeckAsync(itemId);
+                Deck = await _userDeckService.GetDeckByIdAsync(deckId);
+                LegalityResult = await _userDeckService.ValidateDeckAsync(deckId);
             }
             catch
             {
             }
-
-            return Page();
         }
     }
 }

@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using WebAppMTGLogic.Database.Interfaces;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+
 
 namespace WebAppMTG.Pages
 {
+    [Authorize]
     public class CreateDeckModel : PageModel
     {
         private readonly IUserDeckService _userDeckService;
@@ -24,18 +28,28 @@ namespace WebAppMTG.Pages
 
         public string? ErrorMessage { get; set; }
 
-        public void OnGet()
+        public IActionResult OnGet()
         {
+            if (!GetCurrentUserId().HasValue)
+            {
+                return RedirectToPage("/Login");
+            }
+
+            return Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            var userId = GetCurrentUserId();
+
+            if (!userId.HasValue)
+            {
+                return RedirectToPage("/Login");
+            }
+
             try
             {
-                int userId = 1; // tijdelijk hardcoded
-
-                var deckId = await _userDeckService.CreateDeckAsync(userId, Name, Format, Description);
-
+                var deckId = await _userDeckService.CreateDeckAsync(userId.Value, Name, Format, Description);
                 return RedirectToPage("/DeckContents", new { id = deckId });
             }
             catch (Exception ex)
@@ -43,6 +57,18 @@ namespace WebAppMTG.Pages
                 ErrorMessage = ex.Message;
                 return Page();
             }
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var userIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (int.TryParse(userIdValue, out var userId))
+            {
+                return userId;
+            }
+
+            return null;
         }
     }
 }

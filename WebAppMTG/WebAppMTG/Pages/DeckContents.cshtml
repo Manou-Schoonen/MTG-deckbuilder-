@@ -67,6 +67,10 @@
             <div class="deck-hero">
                 <div class="deck-hero-main">
                     <div class="deck-title-row">
+                        <form method="post" asp-page-handler="DeleteDeck" id="deleteDeckForm">
+                            <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
+                        </form>
+
                         <form method="post" asp-page-handler="RenameDeck" id="renameDeckForm" class="deck-title-form">
                             <input type="hidden" name="itemId" value="@Model.Deck.ItemId" />
 
@@ -94,7 +98,6 @@
                             </button>
 
                             <span id="deckNameText" class="deck-title-text">@Model.Deck.Name</span>
-
                             <input type="text"
                                    id="deckNameInput"
                                    name="NewDeckName"

@@ -4,9 +4,12 @@ using WebAppMTGLogic.Database.Interfaces;
 using WebAppMTGLogic.Database.Models;
 using WebAppMTGModelsDL.Exceptions;
 using WebAppMTGModelsDL.Exeptions;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace WebAppMTG.Pages
 {
+    [Authorize]
     public class DecksOverviewModel : PageModel
     {
         private readonly IUserDeckService _userDeckService;
@@ -21,11 +24,18 @@ namespace WebAppMTG.Pages
 
         public async Task OnGetAsync()
         {
-            int userId = 1;
+            var userId = GetCurrentUserId();
+
+            if (!userId.HasValue)
+            {
+                ErrorMessage = "Gebruiker niet gevonden.";
+                Decks = new List<DeckModel>();
+                return;
+            }
 
             try
             {
-                Decks = await _userDeckService.GetDecksByUserIdAsync(userId);
+                Decks = await _userDeckService.GetDecksByUserIdAsync(userId.Value);
             }
             catch (DatabaseUnavailableException)
             {
@@ -37,6 +47,18 @@ namespace WebAppMTG.Pages
                 ErrorMessage = "Je decks konden niet volledig worden geladen omdat de API momenteel niet reageert.";
                 Decks = new List<DeckModel>();
             }
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var userIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (int.TryParse(userIdValue, out var userId))
+            {
+                return userId;
+            }
+
+            return null;
         }
     }
 }

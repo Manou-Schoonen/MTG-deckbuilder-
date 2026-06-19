@@ -67,24 +67,29 @@
                             <div class="modal-dialog">
                                 <div class="modal-content custom-modal-content">
                                     <form method="post" asp-page-handler="AddToDeck">
+                                        @Html.AntiForgeryToken()
+
                                         <div class="modal-header custom-modal-header">
                                             <h5 class="modal-title">Voeg @card.Name toe aan een deck</h5>
-                                            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                                            <button type="button"
+                                                    class="btn-close btn-close-white"
+                                                    data-bs-dismiss="modal"
+                                                    aria-label="Sluiten"></button>
                                         </div>
 
                                         <div class="modal-body custom-modal-body">
-                                            <input type="hidden" name="SelectedCardId" value="@card.Id" />
+                                            <input type="hidden" asp-for="SelectedCardId" value="@card.Id" />
 
-                                            <input type="hidden" name="Query" value="@Model.Query" />
-                                            <input type="hidden" name="Name" value="@Model.Name" />
-                                            <input type="hidden" name="TypeLine" value="@Model.TypeLine" />
-                                            <input type="hidden" name="Color" value="@Model.Color" />
-                                            <input type="hidden" name="ManaValue" value="@Model.ManaValue" />
-                                            <input type="hidden" name="Format" value="@Model.Format" />
+                                            <input type="hidden" asp-for="Query" />
+                                            <input type="hidden" asp-for="Name" />
+                                            <input type="hidden" asp-for="TypeLine" />
+                                            <input type="hidden" asp-for="Color" />
+                                            <input type="hidden" asp-for="ManaValue" />
+                                            <input type="hidden" asp-for="Format" />
 
                                             <div class="mb-3">
-                                                <label class="form-label">Deck</label>
-                                                <select name="SelectedDeckId" class="form-select custom-input" required>
+                                                <label asp-for="SelectedDeckId" class="form-label">Deck</label>
+                                                <select asp-for="SelectedDeckId" class="form-select custom-input" required>
                                                     <option value="">-- Kies een deck --</option>
                                                     @foreach (var deck in Model.UserDecks)
                                                     {
@@ -94,13 +99,16 @@
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="form-label">Aantal</label>
-                                                <input type="number" name="QuantityToAdd" value="1" min="1" class="form-control custom-input" />
+                                                <label asp-for="QuantityToAdd" class="form-label">Aantal</label>
+                                                <input asp-for="QuantityToAdd"
+                                                       type="number"
+                                                       min="1"
+                                                       class="form-control custom-input" />
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="form-label">Board part</label>
-                                                <select name="SelectedBoardPart" class="form-select custom-input">
+                                                <label asp-for="SelectedBoardPart" class="form-label">Board part</label>
+                                                <select asp-for="SelectedBoardPart" class="form-select custom-input">
                                                     <option value="Mainboard">Mainboard</option>
                                                     <option value="Sideboard">Sideboard</option>
                                                 </select>
@@ -108,8 +116,14 @@
                                         </div>
 
                                         <div class="modal-footer custom-modal-footer">
-                                            <button type="button" class="secondary-action-button" data-bs-dismiss="modal">Annuleren</button>
-                                            <button type="submit" class="primary-action-button">Toevoegen</button>
+                                            <button type="button"
+                                                    class="secondary-action-button"
+                                                    data-bs-dismiss="modal">
+                                                Annuleren
+                                            </button>
+                                            <button type="submit" class="primary-action-button">
+                                                Toevoegen
+                                            </button>
                                         </div>
                                     </form>
                                 </div>

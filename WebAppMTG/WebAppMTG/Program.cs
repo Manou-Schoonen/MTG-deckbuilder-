@@ -1,13 +1,15 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using WebAppMTGDAL.Database.Repos;
+using WebAppMTGDAL.ScryfallAPI.Services;
 using WebAppMTGLogic.API.Interfaces;
 using WebAppMTGLogic.API.Services;
-using WebAppMTGLogic.Interfaces;
-using WebAppMTGDAL.ScryfallAPI.Services;
-using WebAppMTGDAL.Database.Repos;
 using WebAppMTGLogic.Database.Interfaces;
 using WebAppMTGLogic.Database.Services;
-using WebAppMTGLogic.FormatRules.Interface;
 using WebAppMTGLogic.FormatRules.Formats;
+using WebAppMTGLogic.FormatRules.Interface;
+using WebAppMTGLogic.Interfaces;
+using WebAppMTGModelsDL.Database.Interfaces;
 
 namespace WebAppMTG
 {
@@ -33,11 +35,26 @@ namespace WebAppMTG
             builder.Services.AddScoped<ICardLogicService, CardLogicService>();
             builder.Services.AddScoped<ILegalityRule, Standard>();
             builder.Services.AddScoped<IUserDeckService, UserDeckService>();
+            builder.Services.AddScoped<IUserService, UserService>();
 
-            builder.Services.AddScoped<IMySQLDeckRepo>(sp =>
+            builder.Services.AddScoped<IDeckRepo>(sp =>
             {
                 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
                 return new SqlServerDeckRepo(connectionString!);
+            });
+
+            builder.Services.AddScoped<IUserRepo>(sp =>
+            {
+                var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+                return new SqlServerUserRepo(connectionString!);
+            });
+            
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+            {
+                options.LoginPath = "/Login";
+                options.LogoutPath = "/Logout";
+                options.AccessDeniedPath = "/Login";
             });
 
             var app = builder.Build();

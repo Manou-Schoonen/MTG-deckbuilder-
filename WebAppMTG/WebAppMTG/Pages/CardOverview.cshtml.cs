@@ -8,6 +8,7 @@ using WebAppMTGLogic.Database.Interfaces;
 using WebAppMTGLogic.Database.Models;
 using WebAppMTGModelsDL.Exceptions;
 using WebAppMTGModelsDL.Exeptions;
+using System.Security.Claims;
 
 namespace WebAppMTG.Pages
 {
@@ -46,7 +47,12 @@ namespace WebAppMTG.Pages
         public List<CardReturnModel> Cards { get; set; } = new();
         public List<DeckModel> UserDecks { get; set; } = new();
 
-        public bool CanAddToDeck => string.IsNullOrWhiteSpace(DeckErrorMessage) && UserDecks.Any();
+        public bool IsLoggedIn => User.Identity?.IsAuthenticated ?? false;
+
+        public bool CanAddToDeck =>
+            IsLoggedIn &&
+            string.IsNullOrWhiteSpace(DeckErrorMessage) &&
+            UserDecks.Any();
 
         [BindProperty]
         public int SelectedDeckId { get; set; }
@@ -62,64 +68,50 @@ namespace WebAppMTG.Pages
 
         public async Task OnGetAsync()
         {
-            int userId = 1;
-
-            try
-            {
-                UserDecks = await _userDeckService.GetDecksByUserIdAsync(userId);
-            }
-            catch (DatabaseUnavailableException)
-            {
-                DeckErrorMessage = "Decks konden niet worden geladen omdat de database momenteel offline is.";
-                UserDecks = new List<DeckModel>();
-            }
-            catch (ExternalApiUnavailableException)
-            {
-                DeckErrorMessage = "Decks konden niet volledig worden geladen omdat kaartinformatie tijdelijk niet beschikbaar is.";
-                UserDecks = new List<DeckModel>();
-            }
-
-            try
-            {
-                bool hasAdvancedSearch =
-                    !string.IsNullOrWhiteSpace(Name) ||
-                    !string.IsNullOrWhiteSpace(Color) ||
-                    !string.IsNullOrWhiteSpace(TypeLine) ||
-                    !string.IsNullOrWhiteSpace(ManaValue) ||
-                    !string.IsNullOrWhiteSpace(Format);
-
-                if (hasAdvancedSearch)
-                {
-                    Cards = await _cardLogicService.AdvancedSearchAsync(
-                        new WebAppMTGLogic.API.Models.AdvancedSearchModel
-                        {
-                            Name = Name,
-                            Color = Color,
-                            TypeLine = TypeLine,
-                            ManaValue = ManaValue,
-                            Format = Format
-                        });
-                }
-                else if (!string.IsNullOrWhiteSpace(Query))
-                {
-                    Cards = await _cardLogicService.SearchCardsAsync(Query);
-                }
-            }
-            catch (ExternalApiUnavailableException)
-            {
-                ApiErrorMessage = "Kaarten konden niet worden geladen omdat de externe API momenteel niet reageert.";
-                Cards = new List<CardReturnModel>();
-            }
+            await LoadUserDecksAsync();
+            await LoadCardsAsync();
         }
 
         public async Task<IActionResult> OnPostAddToDeckAsync()
         {
-            int userId = 1;
+            var userId = GetCurrentUserId();
+
+            if (!userId.HasValue)
+            {
+                DeckErrorMessage = "Je bent niet correct ingelogd. Log opnieuw in.";
+                await LoadUserDecksAsync();
+                await LoadCardsAsync();
+                return Page();
+            }
+
+            if (SelectedDeckId <= 0)
+            {
+                DeckErrorMessage = "Kies een geldig deck.";
+                await LoadUserDecksAsync();
+                await LoadCardsAsync();
+                return Page();
+            }
+
+            if (string.IsNullOrWhiteSpace(SelectedCardId))
+            {
+                DeckErrorMessage = "Geen kaart geselecteerd.";
+                await LoadUserDecksAsync();
+                await LoadCardsAsync();
+                return Page();
+            }
+
+            if (QuantityToAdd <= 0)
+            {
+                DeckErrorMessage = "Aantal moet minstens 1 zijn.";
+                await LoadUserDecksAsync();
+                await LoadCardsAsync();
+                return Page();
+            }
 
             try
             {
                 await _userDeckService.AddCardToDeckAsync(
-                    userId,
+                    userId.Value,
                     SelectedDeckId,
                     SelectedCardId,
                     QuantityToAdd,
@@ -148,8 +140,94 @@ namespace WebAppMTG.Pages
                 DeckErrorMessage = ex.Message;
             }
 
-            await OnGetAsync();
+            await LoadUserDecksAsync();
+            await LoadCardsAsync();
             return Page();
+        }
+
+        private async Task LoadUserDecksAsync()
+        {
+            var userId = GetCurrentUserId();
+
+            if (!userId.HasValue)
+            {
+                UserDecks = new List<DeckModel>();
+                return;
+            }
+
+            try
+            {
+                UserDecks = await _userDeckService.GetDecksByUserIdAsync(userId.Value);
+            }
+            catch (DatabaseUnavailableException)
+            {
+                if (string.IsNullOrWhiteSpace(DeckErrorMessage))
+                {
+                    DeckErrorMessage = "Decks konden niet worden geladen omdat de database momenteel offline is.";
+                }
+
+                UserDecks = new List<DeckModel>();
+            }
+            catch (ExternalApiUnavailableException)
+            {
+                if (string.IsNullOrWhiteSpace(DeckErrorMessage))
+                {
+                    DeckErrorMessage = "Decks konden niet volledig worden geladen omdat kaartinformatie tijdelijk niet beschikbaar is.";
+                }
+
+                UserDecks = new List<DeckModel>();
+            }
+        }
+
+        private async Task LoadCardsAsync()
+        {
+            try
+            {
+                bool hasAdvancedSearch =
+                    !string.IsNullOrWhiteSpace(Name) ||
+                    !string.IsNullOrWhiteSpace(Color) ||
+                    !string.IsNullOrWhiteSpace(TypeLine) ||
+                    !string.IsNullOrWhiteSpace(ManaValue) ||
+                    !string.IsNullOrWhiteSpace(Format);
+
+                if (hasAdvancedSearch)
+                {
+                    Cards = await _cardLogicService.AdvancedSearchAsync(
+                        new WebAppMTGLogic.API.Models.AdvancedSearchModel
+                        {
+                            Name = Name,
+                            Color = Color,
+                            TypeLine = TypeLine,
+                            ManaValue = ManaValue,
+                            Format = Format
+                        });
+                }
+                else if (!string.IsNullOrWhiteSpace(Query))
+                {
+                    Cards = await _cardLogicService.SearchCardsAsync(Query);
+                }
+                else
+                {
+                    Cards = new List<CardReturnModel>();
+                }
+            }
+            catch (ExternalApiUnavailableException)
+            {
+                ApiErrorMessage = "Kaarten konden niet worden geladen omdat de externe API momenteel niet reageert.";
+                Cards = new List<CardReturnModel>();
+            }
+        }
+
+        private int? GetCurrentUserId()
+        {
+            var userIdValue = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (int.TryParse(userIdValue, out var userId))
+            {
+                return userId;
+            }
+
+            return null;
         }
     }
 }

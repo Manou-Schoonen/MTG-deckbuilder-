@@ -9,7 +9,7 @@ using WebAppMTGModelsDL.Exceptions;
 
 namespace WebAppMTGDAL.Database.Repos
 {
-    public class SqlServerDeckRepo : IMySQLDeckRepo
+    public class SqlServerDeckRepo : IDeckRepo
     {
         private readonly string _connectionString;
 
@@ -34,7 +34,7 @@ namespace WebAppMTGDAL.Database.Repos
                 WHERE i.user_id = @userId
                   AND i.item_type = 'deck'
                 ORDER BY i.name;
-            ";
+                ";
 
                 await using var cmd = new SqlCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@userId", userId);
@@ -73,7 +73,7 @@ namespace WebAppMTGDAL.Database.Repos
                 INNER JOIN decks d ON d.item_id = i.id
                 WHERE i.id = @itemId
                   AND i.item_type = 'deck';
-            ";
+                ";
 
                 await using var cmd = new SqlCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@itemId", itemId);
@@ -114,7 +114,7 @@ namespace WebAppMTGDAL.Database.Repos
                 FROM item_card_references
                 WHERE item_id = @itemId
                 ORDER BY boardpart, id;
-            ";
+                ";
 
                 await using var cmd = new SqlCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@itemId", itemId);
@@ -157,7 +157,7 @@ namespace WebAppMTGDAL.Database.Repos
                     INSERT INTO items (user_id, name, item_type)
                     VALUES (@userId, @name, 'deck');
                     SELECT CAST(SCOPE_IDENTITY() AS INT);
-                ";
+                    ";
 
                     await using (var itemCmd = new SqlCommand(itemSql, connection, transaction))
                     {
@@ -171,7 +171,7 @@ namespace WebAppMTGDAL.Database.Repos
                     const string deckSql = @"
                     INSERT INTO decks (item_id, format, description)
                     VALUES (@itemId, @format, @description);
-                ";
+                    ";
 
                     await using (var deckCmd = new SqlCommand(deckSql, connection, transaction))
                     {
@@ -208,7 +208,7 @@ namespace WebAppMTGDAL.Database.Repos
                 INSERT INTO item_card_references (item_id, card_id, quantity, boardpart)
                 VALUES (@itemId, @cardId, @quantity, @boardpart);
                 SELECT CAST(SCOPE_IDENTITY() AS INT);
-            ";
+                ";
 
                 await using var cmd = new SqlCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@itemId", itemId);
@@ -235,7 +235,7 @@ namespace WebAppMTGDAL.Database.Repos
                 const string sql = @"
                 DELETE FROM item_card_references
                 WHERE card_id = @cardId AND item_id = @itemId;
-            ";
+                ";
 
                 await using var cmd = new SqlCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@cardId", cardEntryId);
@@ -257,11 +257,11 @@ namespace WebAppMTGDAL.Database.Repos
                 await connection.OpenAsync();
 
                 const string sql = @"
-        UPDATE items
-        SET name = @name
-        WHERE id = @itemId
-          AND item_type = 'deck';
-    ";
+                UPDATE items
+                SET name = @name
+                WHERE id = @itemId
+                AND item_type = 'deck';
+                ";
 
                 await using var cmd = new SqlCommand(sql, connection);
                 cmd.Parameters.AddWithValue("@name", newName);
@@ -287,9 +287,9 @@ namespace WebAppMTGDAL.Database.Repos
                 try
                 {
                     const string deleteCardsSql = @"
-            DELETE FROM item_card_references
-            WHERE item_id = @itemId;
-        ";
+                    DELETE FROM item_card_references
+                    WHERE item_id = @itemId;
+                    ";
 
                     await using (var deleteCardsCmd = new SqlCommand(deleteCardsSql, connection, transaction))
                     {
@@ -298,9 +298,9 @@ namespace WebAppMTGDAL.Database.Repos
                     }
 
                     const string deleteDeckSql = @"
-            DELETE FROM decks
-            WHERE item_id = @itemId;
-        ";
+                    DELETE FROM decks
+                    WHERE item_id = @itemId;
+                    ";
 
                     await using (var deleteDeckCmd = new SqlCommand(deleteDeckSql, connection, transaction))
                     {
@@ -309,10 +309,10 @@ namespace WebAppMTGDAL.Database.Repos
                     }
 
                     const string deleteItemSql = @"
-            DELETE FROM items
-            WHERE id = @itemId
-              AND item_type = 'deck';
-        ";
+                    DELETE FROM items
+                    WHERE id = @itemId
+                    AND item_type = 'deck';
+                    ";
 
                     await using (var deleteItemCmd = new SqlCommand(deleteItemSql, connection, transaction))
                     {
